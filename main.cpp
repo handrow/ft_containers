@@ -6,12 +6,13 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:18 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/17 18:23:33 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/18 17:52:00 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <vector>
 #include <iostream>
+#include <memory>
 
 int main()
 {
@@ -19,9 +20,15 @@ int main()
 	vec.push_back("S");
 	vec.push_back("S");
 	vec.push_back("S");
+	std::vector<int>::iterator iii = vec.
 	for (int i = 0; i < vec.size(); ++i)
 		std::cout << vec[i] << std::endl;
 	vec.assign(3, "Sam");
 		for (int i = 0; i < vec.size(); ++i)
 			std::cout << vec[i] << std::endl;
+	std::allocator<int> alloc;
+	alloc.allocate(8);
+	int *a = alloc.allocate(1);
+	alloc.construct(a, 5);
+
 }

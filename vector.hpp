@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/17 20:54:34 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/18 18:39:22 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,31 @@ namespace ft
 		vector(const vector& copy); 													//	copy
 		~vector();
 
-		vector&		operator=(const vector& copy);
-		void		assign(size_type num, reference u);
+		vector&				operator=(const vector& copy);
+		void				assign(size_type num, reference u);
 
 		// ELEMENT ACCESS
 		size_type&			at(size_type pos);
 		const size_type&	at(size_type pos) const;
 		size_type&			operator[](size_type pos);
 		const size_type&	operator[](size_type pos) const;
+
+		// ITERATOR
+		template <typename _T, typename _Distance = std::ptrdiff_t, typename _Pointer = _T*, typename _Reference = _T&>
+		class	iterator
+		{
+		public:
+			typedef	_T					value_type;
+			typedef	_Distance			difference_type;
+			typedef	_Pointer			pointer;
+			typedef	iterator<_T>		iterator;
+			typedef iterator<const _T>	const_iterator;
+
+			iterator		begin();
+			iterator		end();
+
+			const_iterator	begin() const;
+			const_iterator	end() const;
+		};
 	};
 }
