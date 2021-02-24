@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/24 21:41:33 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/25 01:15:28 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,24 @@ namespace ft
     {
     public:
 
-        typedef _T                              value_type;
-        typedef _Allocator                      allocator_type;
-        typedef	size_t                          size_type;
-        typedef value_type&                     reference;
-        typedef const value_type&               const_reference;
-        typedef value_type*                     pointer;
-        typedef const value_type*               const_pointer;
-        typedef ptrdiff_t                       difference_type;
-        typedef iterator<value_type>            iterator;
-       // typedef iterator<const value_type>      const_iterator;
+        typedef _T                                  value_type;
+        typedef _Allocator                          allocator_type;
+        typedef	size_t                              size_type;
+        typedef value_type&                         reference;
+        typedef const value_type&                   const_reference;
+        typedef value_type*                         pointer;
+        typedef const value_type*                   const_pointer;
+        typedef ptrdiff_t                           difference_type;
+        typedef iterator<value_type>                iterator;
+        typedef iterator<const value_type>          const_iterator;
+        typedef reverse_iterator<value_type>        reverse_iterator;
+        typedef reverse_iterator<const value_type>  const_reverse_iterator;
 
     private:
-        allocator_type                          allocator;
-        pointer                                 data;
-        size_type                               length;
-        size_type                               cap;
+        allocator_type                              allocator;
+        pointer                                     data;
+        size_type                                   length;
+        size_type                                   cap;
 
     public:
         // MEMBER FUNCTIONS
@@ -49,17 +51,23 @@ namespace ft
         vector(const vector& src);                                                                      // copy
         ~vector();
 
-        vector&             operator=(const vector& src);
-        void                assign(size_type num, const_reference val);
-        void                assign(iterator first, iterator last );
+        vector&                 operator=(const vector& src);
+        void                    assign(size_type num, const_reference val);
+        void                    assign(iterator first, iterator last );
 
         // ITERATORS
 
-        iterator            begin()                     { return data; }
-        iterator            end()                       { return data + length; }
+        iterator                begin()                     { return data; }
+        iterator                end()                       { return data + length; }
 
-        //const_iterator      begin() const               { return data; }
-        //const_iterator      end() const                 { return data + length; }
+        const_iterator          begin() const               { return data; }
+        const_iterator          end() const                 { return data + length; }
+
+        reverse_iterator        rbegin()                    { return data + length - 1; }
+        reverse_iterator        rend()                      { return data - 1; }
+
+        const_reverse_iterator  rbegin() const              { return data + length - 1; }
+        const_reverse_iterator  rend() const                { return data - 1; }
 
         // ELEMENT ACCESS
     
@@ -231,8 +239,8 @@ namespace ft
             pointer     tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, length * sizeof(value_type));
             allocator.deallocate(data, cap);
-            cap = tmpCap;
             data = tmpData;
+            cap = tmpCap;
        }
         allocator.construct(&data[length++], value);
     }
