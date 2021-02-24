@@ -6,13 +6,14 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:18 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/23 21:00:01 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/24 21:43:16 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <vector>
 #include <iostream>
 #include <memory>
+#include "vector.hpp"
 int main()
 {
     std::vector<std::string> vec;
@@ -42,14 +43,37 @@ int main()
     bb.reserve(10);
     bb.reserve(20);
     
+    bb.insert()    
     std::cout << bb.size() << "|" << bb.capacity() << std::endl;
-
-    std::cout << "MY VECTOR" << std::endl;
-
-    //ft::vector<int> c;
+    std::cout << std::endl;
     
-    //c.reserve(3);
-    //c.push_back(2);
-    //std::cout << c.size() << "|" << c.capacity() << std::endl;
+    std::cout << "MY VECTOR" << std::endl;
+    std::cout << std::endl;
+
+    ft::vector<int> c;
+    std::cout << c.size() << "|" << c.capacity() << std::endl;
+    c.reserve(2);
+    std::cout << c.size() << "|" << c.capacity() << std::endl;
+    c.push_back(2);
+    c.push_back(2);
+    c.push_back(2);
+    c.push_back(2);
+    c.push_back(2);
+    c.pop_back();
+    c.resize(20);
+    std::cout << c.size() << "|" << c.capacity() << std::endl;
+    for (int i = 0; i < c.size(); ++i)
+        std::cout << c[i] << " ";
+    std::cout << std::endl;
+    std::cout << "push elem" << std::endl;
+    ft::vector<int>::iterator   it = c.begin();
+    ft::vector<int>::iterator   id = c.end();
+    //while (it != id)
+    //    std::cout << *it++ << " ";
+    c.insert(it, 10);
+    std::cout << std::endl;
+    
+    
+    
     
 }
