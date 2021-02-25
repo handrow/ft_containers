@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:18 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/24 21:43:16 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/25 19:46:59 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,38 +42,48 @@ int main()
     bb.push_back(2);
     bb.reserve(10);
     bb.reserve(20);
-    
-    bb.insert()    
+        
     std::cout << bb.size() << "|" << bb.capacity() << std::endl;
     std::cout << std::endl;
     
     std::cout << "MY VECTOR" << std::endl;
     std::cout << std::endl;
 
-    ft::vector<int> c;
-    std::cout << c.size() << "|" << c.capacity() << std::endl;
-    c.reserve(2);
-    std::cout << c.size() << "|" << c.capacity() << std::endl;
-    c.push_back(2);
-    c.push_back(2);
-    c.push_back(2);
-    c.push_back(2);
-    c.push_back(2);
-    c.pop_back();
-    c.resize(20);
-    std::cout << c.size() << "|" << c.capacity() << std::endl;
-    for (int i = 0; i < c.size(); ++i)
-        std::cout << c[i] << " ";
-    std::cout << std::endl;
-    std::cout << "push elem" << std::endl;
-    ft::vector<int>::iterator   it = c.begin();
-    ft::vector<int>::iterator   id = c.end();
-    //while (it != id)
-    //    std::cout << *it++ << " ";
-    c.insert(it, 10);
-    std::cout << std::endl;
+    // ft::vector<int> c;
+    // std::cout << c.size() << "|" << c.capacity() << std::endl;
+    // c.reserve(2);
+    // std::cout << c.size() << "|" << c.capacity() << std::endl;
+    // c.push_back(2);
+    // c.push_back(2);
+    // c.push_back(2);
+    // c.push_back(2);
+    // c.push_back(2);
+    // c.pop_back();
+    // c.resize(20);
+    // std::cout << c.size() << "|" << c.capacity() << std::endl;
+    // for (int i = 0; i < c.size(); ++i)
+    //     std::cout << c[i] << " ";
+    // std::cout << std::endl;
+    // std::cout << "push elem" << std::endl;
+    // ft::vector<int>::iterator   it = c.begin();
+    // ft::vector<int>::iterator   id = c.end();
+    // //while (it != id)
+    // //    std::cout << *it++ << " ";
+    // std::cout << std::endl;
     
     
-    
-    
+    std::cout << "BASE TEST" << std::endl;
+    ft::vector<int> vc;
+    vc.push_back(1);
+    vc.push_back(2);
+    vc.push_back(3);
+    std::cout << "BEGIN" << std::endl;
+     for (int i = 0; i < vc.size(); ++i)
+        std::cout << vc[i] << " ";
+   // std::vector<int>::iterator it = vc.begin();
+    ft::vector<int>::iterator id = vc.begin();
+    vc.insert(id + 1, 100);
+    std::cout << "FINAL" <<std::endl;
+   for (int i = 0; i < vc.size(); ++i)
+        std::cout << vc[i] << " ";
 }
