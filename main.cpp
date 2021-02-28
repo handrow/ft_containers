@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:18 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/25 19:46:59 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/28 20:50:23 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,32 @@ int main()
     vc.push_back(1);
     vc.push_back(2);
     vc.push_back(3);
+    vc.push_back(4);
+    vc.push_back(5);
+    vc.push_back(6);
     std::cout << "BEGIN" << std::endl;
      for (int i = 0; i < vc.size(); ++i)
         std::cout << vc[i] << " ";
    // std::vector<int>::iterator it = vc.begin();
     ft::vector<int>::iterator id = vc.begin();
-    vc.insert(id + 1, 100);
-    std::cout << "FINAL" <<std::endl;
+//     vc.insert(id + 1, 100);
+//     std::cout << "FINAL" <<std::endl;
+//    for (int i = 0; i < vc.size(); ++i)
+//         std::cout << vc[i] << " ";
+    vc.insert(id + 2, 5, 100);
+        std::cout << "FINAL" <<std::endl;
    for (int i = 0; i < vc.size(); ++i)
         std::cout << vc[i] << " ";
+    std::cout << std::endl;
+
+
+    std::cout << "TEST INSERT OUT OF RANGE" << std::endl;   
+    std::vector<int> hh;
+    hh.push_back(1);
+    hh.push_back(2);
+    std::vector<int>::iterator iterq = hh.begin();
+    hh.insert(iterq + 5, 100);
+      for (int i = 0; i < hh.size(); ++i)
+        std::cout << hh[i] << " ";
+    
 }

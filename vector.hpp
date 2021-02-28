@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/02/25 01:15:28 by handrow          ###   ########.fr       */
+/*   Updated: 2021/02/28 20:47:05 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <exception>
+#include <limits>
 #include "randomAccessIterator.hpp"
 
 namespace ft
@@ -32,15 +33,28 @@ namespace ft
         typedef const value_type*                   const_pointer;
         typedef ptrdiff_t                           difference_type;
         typedef iterator<value_type>                iterator;
-        typedef iterator<const value_type>          const_iterator;
-        typedef reverse_iterator<value_type>        reverse_iterator;
-        typedef reverse_iterator<const value_type>  const_reverse_iterator;
+        //typedef iterator<const value_type>          const_iterator;
+        //typedef reverse_iterator<value_type>        reverse_iterator;
+        //typedef reverse_iterator<const value_type>  const_reverse_iterator;
 
     private:
         allocator_type                              allocator;
         pointer                                     data;
         size_type                                   length;
         size_type                                   cap;
+
+        
+        // HELP FUNCTIONS
+        size_type   recommend(size_type new_size)
+        {
+            const size_type     ms = max_size();
+            const size_type     _cap = capacity();
+    
+            if (new_size > ms)
+                throw std::length_error("length error");
+            if (_cap >= ms / 2)
+                return std::max<size_type>(2 * _cap, new_size);
+        }
 
     public:
         // MEMBER FUNCTIONS
@@ -60,14 +74,14 @@ namespace ft
         iterator                begin()                     { return data; }
         iterator                end()                       { return data + length; }
 
-        const_iterator          begin() const               { return data; }
-        const_iterator          end() const                 { return data + length; }
+        //const_iterator          begin() const               { return data; }
+        //const_iterator          end() const                 { return data + length; }
 
-        reverse_iterator        rbegin()                    { return data + length - 1; }
-        reverse_iterator        rend()                      { return data - 1; }
+        //reverse_iterator        rbegin()                    { return data + length - 1; }
+        //reverse_iterator        rend()                      { return data - 1; }
 
-        const_reverse_iterator  rbegin() const              { return data + length - 1; }
-        const_reverse_iterator  rend() const                { return data - 1; }
+        //const_reverse_iterator  rbegin() const              { return data + length - 1; }
+        //const_reverse_iterator  rend() const                { return data - 1; }
 
         // ELEMENT ACCESS
     
@@ -92,7 +106,7 @@ namespace ft
 
         void                clear();
         iterator            insert(iterator pos, const_reference value);
-        //void                insert(iterator pos, size_type count, const_reference value);
+        void                insert(iterator pos, size_type count, const_reference value);
        // void                insert(iterator pos, iterator first, iterator last);
         void                push_back(const_reference value);
         void                pop_back();
@@ -100,7 +114,7 @@ namespace ft
 
         // NON-MEMBER FUNCTIONS
 
-        friend bool         operator==(const vector& lhs, const vector& rhs); // i can delete one of parametres like in operator=
+        friend bool         operator==(const vector& lhs, const vector& rhs);
         friend bool         operator!=(const vector& lhs, const vector& rhs);
         friend bool         operator<(const vector& lhs, const vector& rhs);
         friend bool         operator<=(const vector& lhs, const vector& rhs);
@@ -152,6 +166,8 @@ namespace ft
     template<typename T, typename Alloca>
     vector<T, Alloca>&  vector<T, Alloca>::operator=(const vector& src)
     {
+        if (*this == src)
+            return *this;
         this->~vector(); // delete this->data
         allocator = src.alloca;
         data = allocator.allocate(src.cap); // create new data
@@ -216,24 +232,95 @@ namespace ft
         length = 0;
     }
 
+    // a c d e f g 
+    // a c c d e f g : memcpy(data + iidx + 1, data + iidx, (length - iidx) * sizeof(elem_type));
+    // a b c d e f g : data[iidx] = val; ++length;
+
+    // a c d e f g
+    // a c d e f g: tdata = alloca(tmpCap); memcpy(tmpDara, data, iidx * sizeof(elem_type));
+    // a c c d e f g : memcpy(tmpData + iidx + 1, data + iidx, (length - iidx) * sizeof(elem_type));
+    // a b c d e f g : tdata[iidx] = val; ++length;
+    // deallocate; cap = tcap, data = tdata;
     template<typename T, typename Alloca>
     typename vector<T, Alloca>::iterator    vector<T, Alloca>::insert(iterator pos, const_reference value)
     {
-        iterator    it = begin();
-        while (it != pos)
+        const size_type insertIdx = pos - begin();
+        const size_type ms = max_size();
+    
+        if (data == NULL && length == 0)
         {
-            if (it == pos)
-                *pos = value;
-            it++;
+            data = allocator.allocate(1);
+            cap = 1;
         }
-        return pos;   
+        else if (cap > length)
+        {
+            memmove(data + insertIdx + 1, data + insertIdx, (length - insertIdx) * sizeof(value_type));
+            allocator.construct(&data[insertIdx], value);
+            ++length;
+        }
+        else
+        {
+            const size_type tmpCap = recommend(tmpCap);//cap > (ms / 2) ? ms : cap * 2;
+            pointer         tmpData = allocator.allocate(tmpCap);
+            memcpy(tmpData, data, insertIdx * sizeof(value_type));
+            memcpy(tmpData + insertIdx + 1, data + insertIdx, (length - insertIdx) * sizeof(value_type));
+            allocator.construct(&tmpData[insertIdx], value);
+            ++length;
+            allocator.deallocate(data, cap);
+            data = tmpData;
+            cap = tmpCap;
+        }
+        return pos;
+    }
+
+// 1 2 3 4 5
+// 1 2 3 4 2 3 4 5
+// 1 x x x 2 3 4 5
+
+    template<typename T, typename Alloca>
+    void    vector<T, Alloca>::insert(iterator pos, size_type count, const_reference value)
+    {
+        size_type           insertIdx = pos - begin();
+        const size_type     ms = max_size();
+        size_type           num = count;
+
+        if (data == NULL && length == 0)
+        {
+            data = allocator.allocate(1);
+            cap = 1;
+        }
+        else if (cap >= length + num)
+        {
+            memmove(data + insertIdx + count, data + insertIdx, (length - insertIdx) * sizeof(value_type));
+            while (count-- > 0)
+                allocator.construct(&data[insertIdx++], value);
+            length += num;
+        }
+        else
+        {
+            const size_type tmpCap = std::max(cap > (ms / 2) ? ms : cap * 2, length + count);
+            pointer         tmpData = allocator.allocate(tmpCap);
+            memcpy(tmpData, data, insertIdx * sizeof(value_type));
+            memcpy(tmpData + insertIdx + count, data + insertIdx, (length - insertIdx) * sizeof(value_type));
+            while (count-- > 0)
+                allocator.construct(&tmpData[insertIdx++], value);
+            length += num;
+            allocator.deallocate(data, cap);
+            data = tmpData;
+            cap = tmpCap;
+        }
     }
 
     template<typename T, typename Alloca>
     void    vector<T, Alloca>::push_back(const_reference value)
     {
-       if (length == cap)
-       {
+        if (data == NULL && length == 0)
+        {
+            data = allocator.allocate(1);
+            cap = 1;
+        }
+        else if (length == cap)
+        {
             size_type   ms = max_size();
             size_type   tmpCap = cap > (ms / 2) ? ms : cap * 2;
             pointer     tmpData = allocator.allocate(tmpCap);
@@ -241,7 +328,7 @@ namespace ft
             allocator.deallocate(data, cap);
             data = tmpData;
             cap = tmpCap;
-       }
+        }
         allocator.construct(&data[length++], value);
     }
 
