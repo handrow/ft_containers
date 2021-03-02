@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/02 13:44:00 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/02 21:21:03 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 #include <memory>
 #include <exception>
-#include <iostream>
 #include "randomAccessIterator.hpp"
 
 namespace ft
@@ -33,9 +32,9 @@ namespace ft
         typedef const value_type*                   const_pointer;
         typedef ptrdiff_t                           difference_type;
         typedef iterator<value_type>                iterator;
-        //typedef iterator<const value_type>          const_iterator;
-        //typedef reverse_iterator<value_type>        reverse_iterator;
-        //typedef reverse_iterator<const value_type>  const_reverse_iterator;
+        typedef const iterator                      const_iterator;
+        typedef reverse_iterator<iterator>          reverse_iterator;
+        typedef const reverse_iterator              const_reverse_iterator;
 
     private:
         allocator_type                              allocator;
@@ -52,12 +51,8 @@ namespace ft
             if (new_size > ms)
                 throw std::length_error("length error");
             if (_cap >= ms / 2)
-                return std::max<size_type>(2 * _cap, new_size);
-        }
-
-        void       construct_at_end(size_type idx, const_reference value)
-        {
-            allocator.allocate(&data[idx], value_type(value));
+                return ms;
+            return std::max<size_type>(2 * _cap, new_size);
         }
 
     public:
@@ -78,14 +73,14 @@ namespace ft
         iterator                begin()                     { return data; }
         iterator                end()                       { return data + length; }
 
-        //const_iterator          begin() const               { return data; }
-        //const_iterator          end() const                 { return data + length; }
+        const_iterator          begin() const               { return data; }
+        const_iterator          end() const                 { return data + length; }
 
-        //reverse_iterator        rbegin()                    { return data + length - 1; }
-        //reverse_iterator        rend()                      { return data - 1; }
+        reverse_iterator        rbegin()                    { return reverse_iterator(end()); }
+        reverse_iterator        rend()                      { return reverse_iterator(begin()); }
 
-        //const_reverse_iterator  rbegin() const              { return data + length - 1; }
-        //const_reverse_iterator  rend() const                { return data - 1; }
+        const_reverse_iterator  rbegin() const              { return data + length - 1; }
+        const_reverse_iterator  rend() const                { return data - 1; }
 
         // ELEMENT ACCESS
     
@@ -118,16 +113,6 @@ namespace ft
         void                pop_back();
         void                resize(size_type count, value_type value = value_type());
         void                swap(vector& other);
-
-        // NON-MEMBER FUNCTIONS
-
-        friend bool         operator==(const vector& lhs, const vector& rhs);
-        friend bool         operator!=(const vector& lhs, const vector& rhs);
-        friend bool         operator<(const vector& lhs, const vector& rhs);
-        friend bool         operator<=(const vector& lhs, const vector& rhs);
-        friend bool         operator>(const vector& lhs, const vector& rhs);
-        friend bool         operator>=(const vector& lhs, const vector& rhs);
-
     };
 
     template<typename T, typename Alloca>
@@ -147,8 +132,11 @@ namespace ft
 
     template<typename T, typename Alloca>
     vector<T, Alloca>::vector(const vector& src)
-    : allocator(src.allocator), data(src.data), length(src.length), cap(src.cap)
+    : allocator(src.allocator), data(NULL), length(src.length), cap(src.cap)
     {
+        if (src.data != NULL)
+            data = allocator.allocate(src.cap);
+        data = src.data;
         for (size_type i = 0; i < length; ++i)
             allocator.construct(&data[i], src.data[i]);
     }
@@ -172,9 +160,6 @@ namespace ft
         }
     }
 
-
-// empty test = test2 
-// default constructor doesnt called 
     template<typename T, typename Alloca>
     vector<T, Alloca>&  vector<T, Alloca>::operator=(const vector& src)
     {
@@ -258,7 +243,6 @@ namespace ft
     typename vector<T, Alloca>::iterator    vector<T, Alloca>::insert(iterator pos, const_reference value)
     {
         const size_type insertIdx = pos - begin();
-        const size_type ms = max_size();
     
         if (data == NULL && length == 0)
         {
@@ -273,7 +257,7 @@ namespace ft
         }
         else
         {
-            const size_type tmpCap = __recommend(lenght + 1);
+            const size_type tmpCap = __recommend(length + 1);
             pointer         tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, insertIdx * sizeof(value_type));
             memcpy(tmpData + insertIdx + 1, data + insertIdx, (length - insertIdx) * sizeof(value_type));
@@ -290,7 +274,6 @@ namespace ft
     void    vector<T, Alloca>::insert(iterator pos, size_type count, const_reference value)
     {
         size_type           insertIdx = pos - begin();
-        const size_type     ms = max_size();
         size_type           num = count;
 
         if (data == NULL && length == 0)
@@ -307,7 +290,7 @@ namespace ft
         }
         else
         {
-            const size_type tmpCap = std::max(cap > (ms / 2) ? ms : cap * 2, length + count);
+            const size_type tmpCap = __recommend(length + count); //std::max(cap > (ms / 2) ? ms : cap * 2, length + count);
             pointer         tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, insertIdx * sizeof(value_type));
             memcpy(tmpData + insertIdx + count, data + insertIdx, (length - insertIdx) * sizeof(value_type));
@@ -320,8 +303,6 @@ namespace ft
         }
     }
 
-//first != last, then pos != end
-
     // a b c d e f g h
     // a b c d b c d e f g h
     // a x x x b c d e f g h
@@ -330,8 +311,7 @@ namespace ft
     {
         size_type size = last - first;
         size_type insertIdx = pos - begin();
-        const size_type ms = max_size();
-        
+
         if (data == NULL && length == 0)
         {
             data = allocator.allocate(1);
@@ -347,7 +327,7 @@ namespace ft
         }
         else
         {
-            const size_type tmpCap = std::max(cap > (ms / 2) ? ms : cap * 2, length + size);
+            const size_type tmpCap = __recommend(length + size); //std::max(cap > (ms / 2) ? ms : cap * 2, length + size);
             pointer         tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, insertIdx * sizeof(value_type));
             memcpy(tmpData + insertIdx + size, data + insertIdx, (length - insertIdx) * sizeof(value_type));
@@ -360,8 +340,6 @@ namespace ft
         }
     }
 
-    // a b c d e f g : 7 - 6 - 1 = 0
-    // a c d e f g
     template<typename T, typename Alloca>
     typename vector<T, Alloca>::iterator    vector<T, Alloca>::erase(iterator pos)
     {
@@ -373,9 +351,6 @@ namespace ft
         return pos;
     }
 
-    // 0 1 2 3 4 5 6
-    // a b c d e f g : delete [1:4)
-    // a T T T e f g : length - eIdx
     template<typename T, typename Alloca>
     typename vector<T, Alloca>::iterator    vector<T, Alloca>::erase(iterator first, iterator last)
     {
@@ -400,8 +375,7 @@ namespace ft
         }
         else if (length == cap)
         {
-            size_type   ms = max_size();
-            size_type   tmpCap = cap > (ms / 2) ? ms : cap * 2;
+            size_type   tmpCap = __recommend(cap * 2);
             pointer     tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, length * sizeof(value_type));
             allocator.deallocate(data, cap);
@@ -430,10 +404,10 @@ namespace ft
     template<typename T, typename Alloca>
     void    vector<T, Alloca>::swap(vector& other)
     {
-        tmp_data = data;
-        tmp_cap = cap;
-        tmp_length = length;
-        tmp_allocator = allocator;
+        pointer         tmp_data = data;
+        size_type       tmp_cap = cap;
+        size_type       tmp_length = length;
+        allocator_type  tmp_allocator = allocator;
 
         data = other.data;
         cap = other.cap;
@@ -451,4 +425,58 @@ namespace ft
     {
         lhs.swap(rhs);
     }
+
+    // NON-MEMBER FUNCTIONS
+
+    template<typename T, typename Alloca>
+    bool    operator==(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        typename vector<T, Alloca>::iterator x_begin = x.begin();
+        typename vector<T, Alloca>::iterator x_end = x.end();
+        typename vector<T, Alloca>::iterator y_begin = y.begin();
+        typename vector<T, Alloca>::iterator y_end() = y.end();
+
+        while (x_begin != x_end && y_begin != y_end)
+        {
+            if (*x_begin != *y_begin)
+                return false;
+            x_begin++;
+            y_begin++;
+        }
+        if (x.size() != y.size())
+            return false;
+        return true;
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator!=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        return !(x == y);
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator<(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    {
+        
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator<=(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    {
+        
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator>(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    {
+        
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator>=(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    {
+        
+    }
+
+
 } // namespace ft
