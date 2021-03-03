@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/02 21:21:03 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/03 12:25:40 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ namespace ft
     {
         if (src.data != NULL)
             data = allocator.allocate(src.cap);
-        data = src.data;
         for (size_type i = 0; i < length; ++i)
             allocator.construct(&data[i], src.data[i]);
     }
@@ -290,7 +289,7 @@ namespace ft
         }
         else
         {
-            const size_type tmpCap = __recommend(length + count); //std::max(cap > (ms / 2) ? ms : cap * 2, length + count);
+            const size_type tmpCap = __recommend(length + count);
             pointer         tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, insertIdx * sizeof(value_type));
             memcpy(tmpData + insertIdx + count, data + insertIdx, (length - insertIdx) * sizeof(value_type));
@@ -327,7 +326,7 @@ namespace ft
         }
         else
         {
-            const size_type tmpCap = __recommend(length + size); //std::max(cap > (ms / 2) ? ms : cap * 2, length + size);
+            const size_type tmpCap = __recommend(length + size);
             pointer         tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, insertIdx * sizeof(value_type));
             memcpy(tmpData + insertIdx + size, data + insertIdx, (length - insertIdx) * sizeof(value_type));
@@ -375,7 +374,7 @@ namespace ft
         }
         else if (length == cap)
         {
-            size_type   tmpCap = __recommend(cap * 2);
+            size_type   tmpCap = __recommend(length + 1);
             pointer     tmpData = allocator.allocate(tmpCap);
             memcpy(tmpData, data, length * sizeof(value_type));
             allocator.deallocate(data, cap);
@@ -434,7 +433,7 @@ namespace ft
         typename vector<T, Alloca>::iterator x_begin = x.begin();
         typename vector<T, Alloca>::iterator x_end = x.end();
         typename vector<T, Alloca>::iterator y_begin = y.begin();
-        typename vector<T, Alloca>::iterator y_end() = y.end();
+        typename vector<T, Alloca>::iterator y_end = y.end();
 
         while (x_begin != x_end && y_begin != y_end)
         {
@@ -445,7 +444,7 @@ namespace ft
         }
         if (x.size() != y.size())
             return false;
-        return true;
+        return true; // check std::lexicographical compare
     }
 
     template<typename T, typename Alloca>
