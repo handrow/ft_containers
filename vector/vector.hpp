@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/03 12:25:40 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/03 15:56:24 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ namespace ft
         size_type           size() const                    { return length; }
         size_type           max_size() const                { return allocator.max_size(); }
         size_type           capacity() const                { return cap; }
-        void                reserve(size_type new_cap); // check if reserve works correct
+        void                reserve(size_type new_cap);
 
         // MODIFIERS
 
@@ -119,7 +119,6 @@ namespace ft
     vector<T, Alloca>::vector(const allocator_type& alloc)
     : allocator(alloc), data(NULL), length(0), cap(0)
     {
-        // std::cout << "DEFAULT CALLED" << std::endl;
     }
 
     template<typename T, typename Alloca>
@@ -419,32 +418,18 @@ namespace ft
         other.allocator = tmp_allocator;
     }
 
+    // NON-MEMBER FUNCTIONS
+
     template<typename T, typename Alloca>
     void    swap(vector<T, Alloca>& lhs, vector<T, Alloca>& rhs)
     {
         lhs.swap(rhs);
     }
 
-    // NON-MEMBER FUNCTIONS
-
     template<typename T, typename Alloca>
     bool    operator==(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
     {
-        typename vector<T, Alloca>::iterator x_begin = x.begin();
-        typename vector<T, Alloca>::iterator x_end = x.end();
-        typename vector<T, Alloca>::iterator y_begin = y.begin();
-        typename vector<T, Alloca>::iterator y_end = y.end();
-
-        while (x_begin != x_end && y_begin != y_end)
-        {
-            if (*x_begin != *y_begin)
-                return false;
-            x_begin++;
-            y_begin++;
-        }
-        if (x.size() != y.size())
-            return false;
-        return true; // check std::lexicographical compare
+        return x.data == y.data;
     }
 
     template<typename T, typename Alloca>
@@ -454,28 +439,27 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    bool    operator<(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    bool    operator<(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
     {
-        
+        return x.data < y.data;
     }
 
     template<typename T, typename Alloca>
-    bool    operator<=(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    bool    operator<=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
     {
-        
+        return x.data <= y.data;
     }
 
     template<typename T, typename Alloca>
-    bool    operator>(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    bool    operator>(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
     {
-        
+        return y < x;
     }
 
     template<typename T, typename Alloca>
-    bool    operator>=(const vector<T, Alloca>& lhs, const vector<T, Alloca>& rhs)
+    bool    operator>=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
     {
-        
+        return !(x <= y);
     }
-
 
 } // namespace ft

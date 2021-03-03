@@ -455,66 +455,14 @@ void test_constructor()
 int main()
 {
 	test_constructor();
-	// test_assing();
-	// test_insert();
-	// test_arase();
-	// test_swap();
-	// test_clear();
-	// test_at();
-	// test_reserve();
-	// test_reverse_iterator();
-	// test_base();
-	// test_resize();
-
-	// std::cout << "MY INSERT ITERATOR TEST" << std::endl;
-
-	// ft::vector<int> test;
-	// for (int i = 1; i < 10; i++)
-	// 	test.push_back(i);
-	// for (int i = 0; i < test.size(); i++)
-	// 	std::cout << test[i] << " ";
-	// ft::vector<int>::iterator it = test.begin();
-	// std::cout << std::endl;
-
-	// ft::vector<int> test2;
-	// for (int i = 9; i > 0; i--)
-	// 	test2.push_back(i);
-	// for (int i = 0; i < test2.size(); i++)
-	// 	std::cout << test2[i] << " ";
-	// ft::vector<int>::iterator it1 = test2.begin();
-	// std::cout << std::endl;
-
-
-	// test2.insert(it1 + 1, it + 1, test.end());
-	// for (int i = 0; i < test2.size(); i++)
-	// 	std::cout << test2[i] << " ";
-
-	// std::cout << "TEST OPERATOR=" << std::endl;
-
-	// ft::vector<int>	test;
-	// for (int i = 1; i < 10; i++)
-	// 	test.push_back(i);
-	// ft::vector<int> test2 = test;
-	// // test2.push_back(1);
-	// // test2 = test;
-	// for(int i = 0; i < test2.size(); i++)
-	// 	std::cout << test2[i] << " ";
-	// while(1){}
-
-	// std::cout << "TEST ERASE POS" << std::endl;
-	// ft::vector<int> d;
-	// for (int i = 1; i < 10; i++)
-	// 	d.push_back(i);
-	// for (int i = 0; i < d.size(); i++)	
-	// 	std::cout << d[i] << " ";
-	// std::cout<< "|" << d.size() << "|" << " BEGIN SIZE" << std::endl;
-	// ft::vector<int>::iterator	ie = d.begin();
-
-	// //d.reserve(20); //check it
-	// d.erase(ie + 4, ie + 9);
-	// for (int i = 0; i < d.size(); i++)	
-	// 	std::cout << d[i] << " ";
-	// std::cout<< "|" << d.size() << "|" << " END SIZE" << std::endl;
-	// return 0;
-
+	test_assing();
+	test_insert();
+	test_arase();
+	test_swap();
+	test_clear();
+	test_at();
+	test_reserve();
+	test_reverse_iterator();
+	test_base();
+	test_resize();
 }
