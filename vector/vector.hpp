@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/03 15:56:24 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/03 21:04:56 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ namespace ft
         size_type                                   cap;
 
         // HELP FUNCTIONS
+
+        value_type	__max(value_type a, value_type b)
+        {
+            return a >= b ? a : b;
+        }
+        
         size_type   __recommend(size_type new_size)
         {
             const size_type     ms = max_size();
@@ -52,7 +58,7 @@ namespace ft
                 throw std::length_error("length error");
             if (_cap >= ms / 2)
                 return ms;
-            return std::max<size_type>(2 * _cap, new_size);
+            return __max(2 * _cap, new_size);
         }
 
     public:
@@ -301,9 +307,6 @@ namespace ft
         }
     }
 
-    // a b c d e f g h
-    // a b c d b c d e f g h
-    // a x x x b c d e f g h
     template<typename T, typename Alloca>
     void                vector<T, Alloca>::insert(iterator pos, iterator first, iterator last)
     {
