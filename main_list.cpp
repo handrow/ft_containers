@@ -5,9 +5,17 @@
 int main()
 {
     ft::list<int> l;
-    l.push_back(1);
-    l.push_back(2);
-    l.push_front(4);
+    for (int i = 0; i < 11; i++)
+        l.push_back(i);
     l.pop_back();
-    std::cout << l.size();
+    l.pop_front();
+    l.push_front(30);
+    l.push_front(40);
+    ft::list<int>::iterator it1 = l.begin();
+    ft::list<int>::iterator it2 = l.end();
+    l.erase(it1++);
+   // l.insert(it1, 50); // does not work if i insert value to begin()
+    while (it1 != it2)
+        std::cout << *it1++ << " ";
+    std::cout << std::endl << l.size();
 }

@@ -6,41 +6,35 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/03 21:49:40 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/04 22:02:33 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <memory>
+#include "bidirectionalIterator.hpp"
 
 namespace ft
 {
-    template<typename _T>
-    struct  node_base
-    {
-        _T                  data;
-        struct node_base*   next;
-        struct node_base*   prev;
-
-        node_base(struct node_base* next_node, struct node_base* prev_node)
-        : next(next_node), prev(prev_node) { }
-    };
 
     template< typename _T, typename _Allocator=std::allocator<_T> >
     class list
     {
 
     public:
-        typedef _T                  value_type;
-        typedef _Allocator          allocator_type;
-        typedef size_t              size_type;
-        typedef std::ptrdiff_t      difference_type;
-        typedef value_type&         reference;  // check if it is c++11
-        typedef const value_type&   const_reference;
-        typedef value_type*         pointer;
-        typedef const value_type*   const_pointer;
-        typedef node_base<_T>       node;
+        typedef _T                      value_type;
+        typedef _Allocator              allocator_type;
+        typedef size_t                  size_type;
+        typedef std::ptrdiff_t          difference_type;
+        typedef value_type&             reference;  // check if it is c++11
+        typedef const value_type&       const_reference;
+        typedef value_type*             pointer;
+        typedef const value_type*       const_pointer;
+        typedef node_base<value_type>   node;
+
+        typedef list_iterator<value_type, node>         iterator;
+        typedef const list_iterator<value_type, node>   const_iterator;
 
     private:
         allocator_type  allocator;       
@@ -65,6 +59,12 @@ namespace ft
         reference           back();
         const_reference     back() const;
 
+        // ITERATORS
+        iterator            begin()             { return *_head; }
+        iterator            end()               { return *_tail; }
+
+        const_iterator      begin() const       { return *_head; }
+        const_iterator      end() const         { return *_tail; }
 
         // CAPACITY
         bool                empty() const       { return !_size; }
@@ -72,9 +72,16 @@ namespace ft
         size_type           max_size() const    { return allocator.max_size(); }
         
         // MODIFIERS
+        iterator            insert(iterator pos, const_reference value);
+        void                insert(iterator pos, size_type count, const_reference value);
+        void                insert(iterator pos, iterator first, iterator last);
+        iterator            erase(iterator pos);
+        //iterator            erase(iterator first, iterator last);
         void                push_front(const_reference value);
         void                push_back(const_reference value);
+        void                pop_front();
         void                pop_back();
+        void                resize(size_type count, value_type value = value_type());
     };
 
     template<typename T, typename Alloca>
@@ -86,12 +93,55 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
+    typename list<T, Alloca>::iterator  list<T, Alloca>::insert(iterator pos, const_reference value)
+    {
+        if (pos == begin())
+        {
+            push_front(value); // does not work
+            return begin();
+        }
+        node *ptr = new node(_head, NULL);
+        ptr->data = value;
+        ptr->prev = pos->prev;
+        ptr->next = pos->prev->next;
+        pos->prev->next = ptr;
+        pos->prev = ptr;
+        _size++;
+        return *ptr; 
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::insert(iterator pos, size_type count, const_reference value)
+    {
+        for (size_type i = 0; i < count; ++i)
+            insert(pos, value);
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::insert(iterator pos, iterator first, iterator last)
+    {
+        while (first != last)
+            insert(pos, *first++);
+    }
+    
+    template<typename T, typename Alloca>
+    typename list<T, Alloca>::iterator    list<T, Alloca>::erase(iterator pos)
+    {
+        node    *ptr = pos->_ptr;
+        pos->prev->next = pos->next;
+        pos->next->prev = pos->prev;
+        delete ptr;
+        _size--;
+        return pos;
+    }
+
+    template<typename T, typename Alloca>
     void        list<T, Alloca>::push_front(const_reference value)
     {
         node *ptr = new node(_head, NULL);
         ptr->data = value;
-        // ptr->next = _head;
-        // ptr->prev = NULL;
+        _head->prev = ptr;
+        _head = ptr;
         _size++;
     }
     
@@ -103,6 +153,17 @@ namespace ft
         _tail->next = ptr;
         _tail = ptr;
         _size++;
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::pop_front()
+    {
+        node    *ptr = _head;
+        
+        _head = _head->next;
+        delete ptr;
+        _head->prev = NULL;
+        _size--;
     }
 
     template<typename T, typename Alloca>
