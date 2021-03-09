@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/05 19:22:16 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/09 21:09:57 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 
 namespace ft
 {
+    template <typename T>
+    bool cmp(const T &a, const T &b)
+    {
+        return a < b;
+    }
 
     template< typename _T, typename _Allocator=std::allocator<_T> >
     class list
@@ -50,7 +55,15 @@ namespace ft
        // list(const list& other); // copy
         //~list();
 
-        list&               operator=(const list& other);
+        list&               operator=(const list& other)
+        {
+            clear();
+            _head->next = _tail;
+            _tail->prev = _head;
+            _size = 0;
+            assign(other.begin(), other.end());
+            return (*this);
+        }
         void                assign(size_type count, const_reference value);
         void                assign(iterator first, iterator last);
         
@@ -85,6 +98,27 @@ namespace ft
         void                pop_back();
         void                resize(size_type count, value_type value = value_type());
         void                swap(list& other);
+
+        // OPERATIONS
+        void                sort();
+
+        // template <typename Compare>
+        // void 				sort(Compare comp)
+        // {
+        //     iterator it = begin();
+        //     iterator it2 = begin();
+        //     iterator it_end = end();
+
+        //     while (++it != it_end)
+        //     {
+        //         if (comp(*it, *it2))
+        //         {
+        //             std::swap(*it, it2);   
+        //         }
+        //         else
+        //             ++it2;
+        //     }
+        // }
     };
 
     template<typename T, typename Alloca>
@@ -95,10 +129,18 @@ namespace ft
         _tail = _head;
     }
 
+    // template<typename T, typename Alloca>
+    // list<T, Alloca>::~list()
+    // {
+    //     clear();
+    //     delete _tail;
+    //     delete _head;
+    // }
+    
     template<typename T, typename Alloca>
     void    list<T, Alloca>::assign(size_type count, const_reference value)
     {
-        ~list(); // does not work
+        //~list(); // does not work
         while (count-- > 0)
             push_back(value);
     }
@@ -215,7 +257,7 @@ namespace ft
     void        list<T, Alloca>::resize(size_type count, value_type value)
     {
         while (count > _size)
-            push_back(value);    
+            push_back(value);
         while (count < _size)
             pop_back();
     }
@@ -226,4 +268,32 @@ namespace ft
         allocator_type  tmp_allocator = allocator;
         size_type       tmp_size = _size;   
     }
+
+    template<typename T, typename Alloca>
+    void       list<T, Alloca>::sort()
+    {
+        if (_size > 1)
+        {
+            iterator i1 = begin();
+            iterator i2 = i1;
+            iterator i3 = i2;
+
+            while(i1 != end())
+            {
+                i2 = i1;
+                i1++;
+                i3 = i1;
+                while(i1 != end() && *i1 < *i2)
+                {
+                    std::swap(*i1, *i2);
+                    if (i2 == begin())
+                        break ;
+                    i1 = i2;
+                    --i2;
+                }
+                i1 = i3;
+            }
+        } 
+    }
+
 } // namespace ft
