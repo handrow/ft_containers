@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/11 15:48:05 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/16 00:21:36 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,24 @@ namespace ft
     template< typename _T, typename _Allocator=std::allocator<_T> >
     class list
     {
-
     public:
         typedef _T                      value_type;
         typedef _Allocator              allocator_type;
         typedef size_t                  size_type;
         typedef std::ptrdiff_t          difference_type;
-        typedef value_type&             reference;  // check if it is c++11
+        typedef value_type&             reference;
         typedef const value_type&       const_reference;
         typedef value_type*             pointer;
         typedef const value_type*       const_pointer;
-        typedef node_base<value_type>   node;
+        typedef node_base<value_type>   node_type;
 
-        typedef list_iterator<value_type, node>         iterator;
-        typedef const list_iterator<value_type, node>   const_iterator;
+        typedef list_iterator<value_type>         iterator;
+        typedef list_iterator<const value_type>   const_iterator;
 
     private:
         allocator_type  allocator;       
-        node            *_head; // begin
-        node            *_tail; // end
+        node_type*      _head; // begin
+        node_type*      _tail; // end
         size_type       _size;
     public:
         
@@ -125,6 +124,7 @@ namespace ft
                     first++;
             }
         }
+
         void                reverse();
         void                unique();
         template<class BinaryPredicate>
@@ -178,18 +178,16 @@ namespace ft
 
     template<typename T, typename Alloca>
     list<T, Alloca>::list(const allocator_type& alloc)
-    : allocator(alloc), _head(NULL), _tail(NULL), _size(0)
+    : allocator(alloc)
+    , _head(new node_type(NULL, NULL))
+    , _tail(_head)
+    , _size(0)
     {
-        _head = new node(NULL, NULL);
-        _tail = _head;
     }
 
     // template<typename T, typename Alloca>
     // list<T, Alloca>::~list()
     // {
-    //     clear();
-    //     delete _tail;
-    //     delete _head;
     // }
     
     template<typename T, typename Alloca>
@@ -223,7 +221,7 @@ namespace ft
             push_front(value);
             return begin();
         }
-        node *ptr = new node(_head, NULL);
+        node_type *ptr = new node_type(_head, NULL);
         ptr->data = value;
         ptr->prev = pos->prev;
         ptr->next = pos->prev->next;
@@ -248,14 +246,14 @@ namespace ft
     }
     
     template<typename T, typename Alloca>
-    typename list<T, Alloca>::iterator      list<T, Alloca>::erase(iterator pos)
+    typename list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator pos)
     {
         if (pos == begin())
         {
             pop_front();
             return begin();
         }
-        node    *ptr = pos->prev->next;
+        node_type    *ptr = pos->prev->next;
         pos->prev->next = pos->next;
         pos->next->prev = pos->prev;
         ++pos;
@@ -265,7 +263,7 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    typename list<T, Alloca>::iterator      list<T, Alloca>::erase(iterator first, iterator last)
+    typename list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator first, iterator last)
     {
         iterator ptr;
         while (first != last)
@@ -276,7 +274,7 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::push_front(const_reference value)
     {
-        node *ptr = new node(_head, NULL); // allocate(1) then construct
+        node_type *ptr = new node_type(_head, NULL); // allocate(1) then construct
         ptr->data = value;
         _head->prev = ptr;
         _head = ptr;
@@ -286,7 +284,7 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::push_back(const_reference value)
     {
-        node    *ptr = new node(NULL, _tail);
+        node_type    *ptr = new node_type(NULL, _tail);
         _tail->data = value;
         _tail->next = ptr;
         _tail = ptr;
@@ -296,7 +294,7 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_front()
     {
-        node    *ptr = _head; 
+        node_type    *ptr = _head; 
         _head = _head->next;
         delete ptr;
         _head->prev = NULL;
@@ -306,7 +304,7 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_back()
     {
-        node    *ptr = _tail;
+        node_type    *ptr = _tail;
         _tail = _tail->prev;
         delete ptr;
         _tail->next = NULL;
@@ -334,13 +332,25 @@ namespace ft
     {
         if (!other.empty())
         {
-            node *tmp = pos->prev;
-            pos->prev->next = other._head;
-            pos->prev = other._tail;
-            other._head->prev = tmp;
-            other._tail->next = tmp->next;
+            // pre_insert -> post_insert
+            // pre_insert -> [begin_insert -> ... -> end_insert ] -> post_insert
+            node_type* const post_insert = (node_type*)const_iterator::node_ptr(pos);
+            node_type* const pre_insert = post_insert->prev;
+            node_type* const other_tail = other._tail;
+            node_type* const begin_insert = other._head;
+            node_type* const end_insert = other._tail->prev;
+
+            post_insert->prev = end_insert;
+            if (pre_insert == NULL) // if post_insert was a _head
+                _head = begin_insert;
+            else
+                pre_insert->next = begin_insert;
+            
+            begin_insert->prev = pre_insert;
+            end_insert->next = post_insert;
+
             _size += other._size;
-            other._head = other._tail;
+            other._head = other_tail;
             other._size = 0;
         }
     }
@@ -395,6 +405,59 @@ namespace ft
     void       list<T, Alloca>::sort()
     {
         sort(cmp<T>); // WHY DOES IT WORK
+    }
+
+    template<typename T, typename Alloca>
+    bool        operator==(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        if (x._size != y._size)
+            return false;
+
+        typename list<T, Alloca>::const_iterator  x_first = x.begin();
+        typename list<T, Alloca>::const_iterator  x_last = x.end();
+        typename list<T, Alloca>::const_iterator  y_first = y.begin();
+
+        while (x_first != x_last)
+        {
+            if (*x_first++ != *y_first++)
+                return false;
+        }
+        return true;
+    }
+
+    // template<typename T, typename Alloca>
+    // bool        operator<(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    // {
+    // }
+
+    template<typename T, typename Alloca>
+    bool        operator!=(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        return x == y ? false : true;
+    }
+
+    template<typename T, typename Alloca>
+    bool        operator>(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        return y < x;
+    }
+
+    template<typename T, typename Alloca>
+    bool        operator<=(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        return !(y < x);
+    }
+
+    template<typename T, typename Alloca>
+    bool        operator>=(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        return !(x < y);
+    }
+
+    template<typename T, typename Alloca>
+    void        swap(list<T,Alloca>& x, list<T,Alloca>& y)
+    {
+        x.swap(y);
     }
 
 } // namespace ft

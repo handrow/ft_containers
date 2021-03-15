@@ -16,6 +16,7 @@ void test_splice()
     ft::list<int>::iterator it2 = l.end();
     while (it1 != it2)
         std::cout << *it1++ << " ";
+    std::cout << std::endl;
 
     l1.push_back(3);
     l1.push_back(3);
@@ -24,13 +25,15 @@ void test_splice()
     ft::list<int>::iterator it3 = l1.begin();
     ft::list<int>::iterator it4 = l1.end();
     while (it3 != it4)
-        std::cout << *it1++ << " ";
+        std::cout << *it3++ << " ";
+    std::cout << std::endl;
 
-    l.splice(it2--, l1);
+    l.splice(--it2, l1);
     ft::list<int>::iterator it5 = l.begin();
     ft::list<int>::iterator it6 = l.end();
     while (it5 != it6)
         std::cout << *it5++ << " ";
+    std::cout << std::endl;
 }
 
 int main()
