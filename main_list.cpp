@@ -11,6 +11,9 @@ void test_splice()
     l.push_back(100);
     l.push_back(100);
     l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
 
     ft::list<int>::iterator it1 = l.begin();
     ft::list<int>::iterator it2 = l.end();
@@ -18,9 +21,12 @@ void test_splice()
         std::cout << *it1++ << " ";
     std::cout << std::endl;
 
-    l1.push_back(3);
-    l1.push_back(3);
+    l1.push_back(1);
     l1.push_back(2);
+    l1.push_back(3);
+    l1.push_back(4);
+    l1.push_back(5);
+    l1.push_back(6);
 
     ft::list<int>::iterator it3 = l1.begin();
     ft::list<int>::iterator it4 = l1.end();
@@ -28,7 +34,7 @@ void test_splice()
         std::cout << *it3++ << " ";
     std::cout << std::endl;
 
-    l.splice(--it2, l1);
+    l.splice(--it2, l1, it3, it4);
     ft::list<int>::iterator it5 = l.begin();
     ft::list<int>::iterator it6 = l.end();
     while (it5 != it6)

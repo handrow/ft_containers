@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/16 00:21:36 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/16 20:45:10 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,14 @@ namespace ft
         size_type       _size;
     public:
         
+        size_type   countDist(const_iterator first, const_iterator last)
+        {
+            size_type i = 0;
+            while (first++ != last)
+                i++;
+            return i;
+        }
+
         // MEMBER FUNCTIONS
         list(const allocator_type& alloc=allocator_type()); // default
         //list(size_type count, const reference value = value_type(), const allocator_type& alloc = allocator_type()); // fill
@@ -105,9 +113,10 @@ namespace ft
         void                swap(list& other);
 
         // OPERATIONS
+        //void                merge(list& other);
         void                splice(const_iterator pos, list& other);
         //void                splice(const_iterator pos, list& other, const_iterator it);
-        //void                splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
+        void                splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
         void                remove(const_reference value);
         // check remove_if
         template<class UnaryPredicate>
@@ -352,6 +361,37 @@ namespace ft
             _size += other._size;
             other._head = other_tail;
             other._size = 0;
+        }
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::splice(const_iterator pos, list& other, const_iterator first, const_iterator last)
+    {
+        if (!other.empty() && first != last)
+        {
+            node_type* const post_insert = (node_type*)const_iterator::node_ptr(pos);
+            node_type* pre_insert = post_insert->prev;
+            node_type* begin_insert = (node_type*)const_iterator::node_ptr(first);
+            --last;
+            node_type* end_insert = (node_type*)const_iterator::node_ptr(last);
+            size_type insert_len = countDist(first, last);
+
+            post_insert->prev = end_insert;
+            if (pre_insert == NULL)
+                _head = begin_insert;
+            else
+                pre_insert->next = begin_insert;
+            
+            other._size -= insert_len;
+            _size += insert_len;
+            
+            begin_insert->prev->next = end_insert->next;
+            end_insert->next->prev = begin_insert->prev;
+            
+            pre_insert->next = begin_insert;
+            begin_insert->prev = pre_insert;
+            pre_insert = end_insert->prev;
+            end_insert->prev->next = post_insert;
         }
     }
 
