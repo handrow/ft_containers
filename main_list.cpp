@@ -2,25 +2,32 @@
 #include "list.hpp"
 #include <iostream>
 
+template <typename Container>
+void print(Container& c, const std::string& prefix = "LIST") {
+    typename Container::iterator first = c.begin();
+    typename Container::iterator second = c.end();
+
+    std::cout << prefix << ": ";
+    std::cout << "sz = " << c.size() << ", ";
+    std::cout << "data = [ ";
+    while (first != second) {
+        std::cout << *first++ << " ";
+    }
+    std::cout << "]" << std::endl;
+}
 
 void test_splice()
 {
+
     ft::list<int> l;
+    l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
+    l.push_back(100);
+
     ft::list<int> l1;
-
-    l.push_back(100);
-    l.push_back(100);
-    l.push_back(100);
-    l.push_back(100);
-    l.push_back(100);
-    l.push_back(100);
-
-    ft::list<int>::iterator it1 = l.begin();
-    ft::list<int>::iterator it2 = l.end();
-    while (it1 != it2)
-        std::cout << *it1++ << " ";
-    std::cout << std::endl;
-
     l1.push_back(1);
     l1.push_back(2);
     l1.push_back(3);
@@ -28,19 +35,46 @@ void test_splice()
     l1.push_back(5);
     l1.push_back(6);
 
-    ft::list<int>::iterator it3 = l1.begin();
-    ft::list<int>::iterator it4 = l1.end();
-    while (it3 != it4)
-        std::cout << *it3++ << " ";
-    std::cout << std::endl;
+    print(l, "l ");
+    print(l1, "l1");
 
-    l.splice(--it2, l1, it3, it4);
-    ft::list<int>::iterator it5 = l.begin();
-    ft::list<int>::iterator it6 = l.end();
-    while (it5 != it6)
-        std::cout << *it5++ << " ";
+    l.splice((l.end()), l1);
+    print(l, "l ");
+    print(l1, "l1");
     std::cout << std::endl;
 }
+
+// void test_merge()
+// {
+//     ft::list<int> l;
+//     ft::list<int> l1;
+
+//     l.push_back(100);
+//     l.push_back(100);
+//     l.push_back(100);
+//     l.push_back(100);
+//     l.push_back(100);
+//     l.push_back(100);
+
+//     ft::list<int>::iterator it1 = l.begin();
+//     ft::list<int>::iterator it2 = l.end();
+//     while (it1 != it2)
+//         std::cout << *it1++ << " ";
+//     std::cout << std::endl;
+
+//     l1.push_back(1);
+//     l1.push_back(2);
+//     l1.push_back(3);
+//     l1.push_back(4);
+//     l1.push_back(5);
+//     l1.push_back(6);
+
+//     ft::list<int>::iterator it3 = l1.begin();
+//     ft::list<int>::iterator it4 = l1.end();
+//     while (it3 != it4)
+//         std::cout << *it3++ << " ";
+//     std::cout << std::endl;
+// }
 
 int main()
 {
@@ -76,4 +110,5 @@ int main()
 //     std::cout << std::endl << l.size();
 
     test_splice();
+
 }
