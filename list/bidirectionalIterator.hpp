@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 20:36:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/18 18:16:29 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/22 17:24:12 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,15 @@ namespace ft
         list_rev_iterator   operator++(int)                         {list_rev_iterator tmp(*this); --(*this); return tmp; }
         list_rev_iterator&  operator--()                            { ++_iter; return *this; }
         list_rev_iterator   operator--(int)                         {list_rev_iterator tmp(*this); ++(*this); return tmp; }
+
+        friend bool         operator==(const list_rev_iterator& _x, const list_rev_iterator& _y)
+        {
+            return _x._iter == _y._iter;
+        }
+        friend bool         operator!=(const list_rev_iterator& _x, const list_rev_iterator& _y)
+        {
+            return _x._iter != _y._iter;
+        }
+        
     };
 } // namespace ft

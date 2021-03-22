@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/21 20:17:12 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/22 20:58:57 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,21 @@
 
 #include <memory>
 #include "bidirectionalIterator.hpp"
-
+#include <iostream>
 namespace ft
 {
+
+    template <typename T>
+    bool        pred(const T &a , const T &b)
+    {
+        return a == b;
+    }
+
+    template <typename T>
+    bool        cmp(const T &a, const T &b)
+    {
+        return a < b;
+    }
 
     template< typename _T, typename _Allocator=std::allocator<_T> >
     class list
@@ -31,17 +43,18 @@ namespace ft
         typedef value_type*             pointer;
         typedef const value_type*       const_pointer;
         typedef node_base<value_type>   node_type;
+        typedef typename allocator_type::template rebind<node_type>::other  node_allocator;
 
         typedef list_iterator<value_type>         iterator;
         typedef list_iterator<const value_type>   const_iterator;
 
     private:
-        allocator_type  allocator;       
+        allocator_type  allocator;
+        node_allocator  node_alloca;       
         node_type*      _head; // begin
         node_type*      _tail; // end
         size_type       _size;
-    public:
-        
+   
         // HELP FUNCTIONS
         size_type   countDist(const_iterator first, const_iterator last)
         {
@@ -53,34 +66,51 @@ namespace ft
             }
             return i;
         }
-
-        template <typename T>
-        bool        pred(const T &a , const T &b)
+        node_type*  createNewNode()
         {
-            return a == b;
+            node_type *node = node_alloca.allocate(1);
+            node->next = NULL;
+            node->prev = NULL;
+            return node;
         }
-
-        template <typename T>
-        bool        cmp(const T &a, const T &b)
+        void        pushFrontNode(node_type* node)
         {
-            return a < b;
+            node->next = _head;
+            node->prev = _tail;
+            _head->prev = node;
+            _tail->next = node;
+            _head = node;
         }
+        void        pushBackNode(node_type* node)
+        {
+            if (_head == _tail)
+                pushFrontNode(node);
+            else
+            {
+                _tail->prev->next = node;
+                node->prev = _tail->prev;
+                node->next = _tail;
+                _tail->prev = node;
+            }
+        }
+    public:
 
         // MEMBER FUNCTIONS
         list(const allocator_type& alloc=allocator_type()); // default
-        list(size_type count, const reference value = value_type(), const allocator_type& alloc = allocator_type()); // fill
-        //list(iterator first, iterator last, const allocator_type& alloc = allocator_type()); // range
-       // list(const list& other); // copy
+        list(size_type count, const_reference value = value_type(), const allocator_type& alloc = allocator_type()); // fill
+        list(iterator first, iterator last, const allocator_type& alloc = allocator_type()); // range
+        //list(const list& other); // copy
         //~list();
 
         list&               operator=(const list& other)
         {
-            clear();
+            if (_size)
+                clear();
             _head->next = _tail;
             _tail->prev = _head;
             _size = 0;
             assign(other.begin(), other.end());
-            return (*this);
+            return *this;
         }
         void                assign(size_type count, const_reference value);
         void                assign(iterator first, iterator last);
@@ -101,7 +131,7 @@ namespace ft
         // CAPACITY
         bool                empty() const       { return !_size; }
         size_type           size() const        { return _size; }
-        size_type           max_size() const    { return allocator.max_size(); }
+        size_type           max_size() const    { return node_alloca.max_size(); }
         
         // MODIFIERS
         void                clear();
@@ -128,6 +158,18 @@ namespace ft
             iterator        lastThis = end();
             iterator        firstOther = other.begin();
             iterator        lastOther = other.end();
+
+            while (firstThis != lastThis && firstOther != lastOther)
+            {
+                while (comp(*firstThis, *firstOther))
+                    firstThis++;
+                if (!comp(*firstThis, *firstOther))
+                    splice(firstThis, other, firstOther);
+                firstOther++;
+            }
+            if (firstOther != lastOther)
+                splice(firstThis, other, firstThis, lastOther);
+            // does not work
         }
         void                splice(const_iterator pos, list& other);
         void                splice(const_iterator pos, list& other, const_iterator it);
@@ -170,7 +212,7 @@ namespace ft
             }
         }
         void                sort();
-        template <typename Compare>
+        template<typename Compare>
         void 				sort(Compare comp)
         {
             if (_size > 1)
@@ -200,59 +242,82 @@ namespace ft
 
     template<typename T, typename Alloca>
     list<T, Alloca>::list(const allocator_type& alloc)
-    : allocator(alloc), _head(new node_type(NULL, NULL)), _tail(_head), _size(0)
+    : allocator(alloc), _head(createNewNode()), _tail(_head), _size(0)
     {
     }
 
     template<typename T, typename Alloca>
-    list<T, Alloca>::list(size_type count, const reference value, const allocator_type& alloc)
+    list<T, Alloca>::list(size_type count, const_reference value, const allocator_type& alloc)
+    : allocator(alloc), _head(createNewNode()), _tail(_head), _size(0)
     {
-    }
-
-    // template<typename T, typename Alloca>
-    // list<T, Alloca>::~list()
-    // {
-    // }
-    
-    template<typename T, typename Alloca>
-    void    list<T, Alloca>::assign(size_type count, const_reference value)
-    {
-        //~list(); // does not work
         while (count-- > 0)
             push_back(value);
     }
 
     template<typename T, typename Alloca>
-    void    list<T, Alloca>::assign(iterator first, iterator last)
+    list<T, Alloca>::list(iterator first, iterator last, const allocator_type& alloc)
+    : allocator(alloc), _head(createNewNode()), _tail(_head), _size(countDist(first, last))
     {
-        // here is destructor or clean
+        while (first != last)
+            push_back(*first++);
+    }
+
+    // template<typename T, typename Alloca>
+    // list<T, Alloca>::~list()
+    // {
+    //     // printf("A\n");
+    //     // node_type* node;
+    //     // for (size_type i = 0; i < _size; ++i)
+    //     // {
+    //     //     node = _head;
+    //     //     _head = _head->next;
+    //     //     allocator.destroy(&node->data);
+    //     //     node_alloca.deallocate(node, 1);
+    //     // }
+    //     // _size = 0;
+    //     // printf("A\n");
+    // }
+    
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::assign(size_type count, const_reference value)
+    {
+        clear();
+        while (count-- > 0)
+            push_back(value);
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::assign(iterator first, iterator last)
+    {
+        clear();
         while (first != last)
             push_back(*first++);
     }
 
     template<typename T, typename Alloca>
-    void     list<T, Alloca>::clear()
+    void        list<T, Alloca>::clear()
     {
         while (_size)
             pop_back();
     }
     
     template<typename T, typename Alloca>
-    typename list<T, Alloca>::iterator  list<T, Alloca>::insert(iterator pos, const_reference value)
+    typename    list<T, Alloca>::iterator  list<T, Alloca>::insert(iterator pos, const_reference value)
     {
         if (pos == begin())
         {
             push_front(value);
             return begin();
         }
-        node_type *ptr = new node_type(_head, NULL);
+        node_type *ptr = node_alloca.allocate(1);
+        node_type *post_insert = iterator::node_ptr(pos);
         ptr->data = value;
-        ptr->prev = pos->prev;
-        ptr->next = pos->prev->next;
-        pos->prev->next = ptr;
-        pos->prev = ptr;
-        _size++;
-        return *ptr; 
+        ptr->prev = post_insert->prev;
+        ptr->next = post_insert->prev->next;
+        post_insert->prev->next = ptr;
+        post_insert->prev = ptr;
+        ++_size;
+        return *ptr;
     }
 
     template<typename T, typename Alloca>
@@ -270,24 +335,25 @@ namespace ft
     }
     
     template<typename T, typename Alloca>
-    typename list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator pos)
+    typename    list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator pos)
     {
         if (pos == begin())
         {
             pop_front();
             return begin();
         }
-        node_type    *ptr = pos->prev->next;
-        pos->prev->next = pos->next;
-        pos->next->prev = pos->prev;
+        node_type   *ptr = iterator::node_ptr(pos)->prev->next;
+        node_type   *post_insert = ptr;
+        post_insert->prev->next = post_insert->next;
+        post_insert->next->prev = post_insert->prev;
         ++pos;
         delete ptr;
-        _size--;
+        --_size;
         return pos;
     }
 
     template<typename T, typename Alloca>
-    typename list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator first, iterator last)
+    typename    list<T, Alloca>::iterator  list<T, Alloca>::erase(iterator first, iterator last)
     {
         iterator ptr;
         while (first != last)
@@ -298,17 +364,17 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::push_front(const_reference value)
     {
-        node_type *ptr = new node_type(_head, NULL);
+  
+        node_type* ptr = node_alloca.allocate(1);
         ptr->data = value;
-        _head->prev = ptr;
-        _head = ptr;
+        pushFrontNode(ptr);
         _size++;
     }
     
     template<typename T, typename Alloca>
     void        list<T, Alloca>::push_back(const_reference value)
     {
-        node_type    *ptr = new node_type(NULL, _tail);
+        node_type    *ptr = node_alloca.allocate(1);
         _tail->data = value;
         _tail->next = ptr;
         _tail = ptr;
@@ -318,21 +384,28 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_front()
     {
-        node_type    *ptr = _head; 
-        _head = _head->next;
-        delete ptr;
-        _head->prev = NULL;
-        _size--;
+        if (_size)
+        {
+            node_type    *ptr = _head; 
+            _head = _head->next;
+            delete ptr;
+            _head->prev = NULL;
+            --_size;
+        }
     }
 
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_back()
     {
-        node_type    *ptr = _tail;
-        _tail = _tail->prev;
-        delete ptr;
-        _tail->next = NULL;
-        _size--;
+        if (_size)
+        {
+            node_type    *ptr = _tail;
+            _tail = _tail->prev;
+            delete ptr;
+            //allocator.destroy(&ptr->data);
+            _tail->next = NULL;
+            --_size;
+        }
     }
 
     template<typename T, typename Alloca>
@@ -347,6 +420,9 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::swap(list& other)
     {
+        list<T, Alloca> tmp = *this;
+        *this = other;
+        other = tmp;
     }
 
     template<typename T, typename Alloca>
@@ -473,15 +549,27 @@ namespace ft
         return true;
     }
 
-    // template<typename T, typename Alloca>
-    // bool        operator<(const list<T,Alloca>& x, const list<T,Alloca>& y)
-    // {
-    // }
+    template<typename T, typename Alloca>
+    bool        operator<(const list<T,Alloca>& x, const list<T,Alloca>& y)
+    {
+        typename list<T, Alloca>::const_iterator  x_first = x.begin();
+        typename list<T, Alloca>::const_iterator  x_last = x.end();
+        typename list<T, Alloca>::const_iterator  y_first = y.begin();
+
+        for (; x_first != x_last; ++x_first, ++y_first)
+        {
+            if (*x_first == *y_first || cmp(*x_first, *y_first))
+                return true;
+            if (cmp(*y_first, *x_first))
+                return false;
+        }
+        return false;
+    }
 
     template<typename T, typename Alloca>
     bool        operator!=(const list<T,Alloca>& x, const list<T,Alloca>& y)
     {
-        return x == y ? false : true;
+        return !(x == y);
     }
 
     template<typename T, typename Alloca>
