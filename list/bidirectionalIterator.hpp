@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bidirectionalIterator.hpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 20:36:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/22 17:24:12 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/23 16:53:47 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ namespace ft
     template<typename _T>
     struct  node_base
     {
-        _T                  data;
-        struct node_base*   next;
-        struct node_base*   prev;
+        _T          data;
+        node_base*  next;
+        node_base*  prev;
 
         node_base(struct node_base* next_node, struct node_base* prev_node)
         : next(next_node), prev(prev_node) { }
