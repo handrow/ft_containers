@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stack.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 04:02:55 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 05:59:24 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/24 22:21:00 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 namespace ft
 {
-    template< typename _T, typename _Allocator=std::allocator<_T>, class _Container=list<_T, _Allocator> >
+    template< typename _T, class _Container=list<_T> >
     class stack
     {
     public:
@@ -83,8 +83,8 @@ namespace ft
         }
 
     };
-    template< class T, class Alloca, class Container >
-    void swap(stack<T,Alloca, Container>& x, stack<T,Alloca, Container>& y)
+    template< class T, class Container >
+    void swap(stack<T, Container>& x, stack<T, Container>& y)
     {
         x.swap(y);
     }

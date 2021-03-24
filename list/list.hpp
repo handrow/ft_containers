@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 05:58:16 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/24 22:19:23 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,8 @@ namespace ft
 
         list&               operator=(const list& other);
         void                assign(size_type count, const_reference value);
-        void                assign(iterator first, iterator last);
+        template < class IntputIt >
+        void                assign(IntputIt first, IntputIt last);
         
         // ELEMENT ACCESS
         reference           front();
@@ -294,7 +295,8 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    void        list<T, Alloca>::assign(iterator first, iterator last)
+    template<typename _InputIt>
+    void        list<T, Alloca>::assign(_InputIt first, _InputIt last)
     {
         clear();
         while (first != last)
