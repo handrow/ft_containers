@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/23 17:09:10 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/24 05:58:16 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,14 @@ namespace ft
 
         typedef list_iterator<value_type>         iterator;
         typedef list_iterator<const value_type>   const_iterator;
+        typedef list_rev_iterator<iterator>       reverse_iterator;
+        typedef list_rev_iterator<const_iterator> const_rev_iterator;
 
     private:
         allocator_type          _allocator;
         node_allocator_type     _node_allocator;       
-        node_type*              _head; // begin
-        node_type*              _tail; // end
+        node_type*              _head;
+        node_type*              _tail;
         size_type               _size;
    
         // HELP FUNCTIONS
@@ -100,17 +102,13 @@ namespace ft
     public:
 
         // MEMBER FUNCTIONS
-        list(const allocator_type& alloc=allocator_type()); // default
+        list(const allocator_type& alloc=allocator_type());
         list(const list& other);
-        list(size_type count, const_reference value = value_type(), const allocator_type& alloc = allocator_type()); // fill
-        list(iterator first, iterator last, const allocator_type& alloc = allocator_type()); // range
+        list(size_type count, const_reference value = value_type(), const allocator_type& alloc = allocator_type());
+        list(iterator first, iterator last, const allocator_type& alloc = allocator_type());
         ~list();
 
-        list&               operator=(const list& other)
-        {
-            assign(other.begin(), other.end());
-            return *this;
-        }
+        list&               operator=(const list& other);
         void                assign(size_type count, const_reference value);
         void                assign(iterator first, iterator last);
         
@@ -127,6 +125,12 @@ namespace ft
         const_iterator      begin() const       { return *_head; }
         const_iterator      end() const         { return *_tail; }
 
+        reverse_iterator    rbegin()            { return reverse_iterator(end()); }
+        reverse_iterator    rend()              { return reverse_iterator(begin()); }
+
+        const_rev_iterator  rbegin() const      { return const_rev_iterator(!_size ? _tail : _tail->prev); }
+        const_rev_iterator  rend() const        { return _tail; }
+
         // CAPACITY
         bool                empty() const       { return !_size; }
         size_type           size() const        { return _size; }
@@ -134,7 +138,7 @@ namespace ft
         
         // MODIFIERS
         void                clear();
-        iterator            insert(iterator pos, const_reference value);
+        iterator            insert(iterator pos, const_reference value);// check const_iterator
         void                insert(iterator pos, size_type count, const_reference value);
         void                insert(iterator pos, iterator first, iterator last);
         iterator            erase(iterator pos);
@@ -147,29 +151,26 @@ namespace ft
         void                swap(list& other);
 
         // OPERATIONS
-        void                merge(list& other);
-        template <class Compare>
-        void                merge(list& other, Compare comp)
-        {
-            if (this == &other)
-                return;
-            iterator        firstThis = begin();
-            iterator        lastThis = end();
-            iterator        firstOther = other.begin();
-            iterator        lastOther = other.end();
+        // void                merge(list& other);
+        // template <class CompareFunc>
+        // void                merge(list& other, CompareFunc comp)
+        // {
+        //     if (this == &other)
+        //         return;
+        //     iterator        firstThis = begin();
+        //     iterator        lastThis = end();
+        //     iterator        firstOther = other.begin();
+        //     iterator        lastOther = other.end();
 
-            while (firstThis != lastThis && firstOther != lastOther)
-            {
-                while (comp(*firstThis, *firstOther))
-                    firstThis++;
-                if (!comp(*firstThis, *firstOther))
-                    splice(firstThis, other, firstOther);
-                firstOther++;
-            }
-            if (firstOther != lastOther)
-                splice(firstThis, other, firstThis, lastOther);
-            // does not work
-        }
+
+		// 	while (firstThis != lastThis && firstOther != lastOther)
+        //     {
+        //         if (comp(*firstOther, *firstThis))
+        //         {
+        //         }
+        //     }
+				
+        // }
         void                splice(const_iterator pos, list& other);
         void                splice(const_iterator pos, list& other, const_iterator it);
         void                splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
@@ -278,6 +279,13 @@ namespace ft
     }
     
     template<typename T, typename Alloca>
+    list<T, Alloca>&    list<T, Alloca>::operator=(const list& other)
+    {
+        assign(other.begin(), other.end());
+        return *this;
+    }
+
+    template<typename T, typename Alloca>
     void        list<T, Alloca>::assign(size_type count, const_reference value)
     {
         clear();
@@ -382,30 +390,24 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_front()
     {
-        if (_size)
-        {
-            node_type    *ptr = _head;
-            _head = _head->next;
-            _head->prev = NULL;
-            deleteNode(ptr);
-            --_size;
-        }
+        node_type    *ptr = _head;
+        _head = _head->next;
+        _head->prev = NULL;
+        deleteNode(ptr);
+        --_size;
     }
 
     template<typename T, typename Alloca>
     void        list<T, Alloca>::pop_back()
     {
-        if (_size)
-        {
-            node_type    *ptr = _tail->prev;
-            _tail->prev = ptr->prev;
-            if (ptr->prev != NULL) // if ptr != head
-                ptr->prev->next = _tail;
-            else
-                _head = _tail;
-            deleteNode(ptr);
-            --_size;
-        }
+        node_type    *ptr = _tail->prev;
+        _tail->prev = ptr->prev;
+        if (ptr->prev != NULL) // if ptr != head
+            ptr->prev->next = _tail;
+        else
+            _head = _tail;
+        deleteNode(ptr);
+        --_size;
     }
 
     template<typename T, typename Alloca>
@@ -439,10 +441,10 @@ namespace ft
         other._node_allocator = our_node_alloc;
     }
 
-    template<typename T, typename Alloca>
-    void        list<T, Alloca>::merge(list& other)
-    {
-    }
+    // template<typename T, typename Alloca>
+    // void        list<T, Alloca>::merge(list& other)
+    // {
+    // }
 
     template<typename T, typename Alloca>
     void        list<T, Alloca>::splice(const_iterator pos, list& other)
@@ -531,23 +533,23 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::unique()
     {
-    if (_size > 1)
-    {
-        iterator    i1 = begin();
-        iterator    i2 = i1;
-
-        while (++i1 != end())
+        if (_size > 1)
         {
-            if (*i1 == *i2)
+            iterator    i1 = begin();
+            iterator    i2 = i1;
+
+            while (++i1 != end())
             {
-                erase(i1);
-                i1 = i2;
+                if (*i1 == *i2)
+                {
+                    erase(i1);
+                    i1 = i2;
+                }
+                else
+                    i2 = i1;
             }
-            else
-                i2 = i1;
         }
     }
-}
 
     template<typename T, typename Alloca>
     void       list<T, Alloca>::sort()
