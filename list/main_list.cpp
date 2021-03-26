@@ -54,21 +54,26 @@ int main()
 {
     //test_splice();
     //testFillConstructor();
-    ft::list<int> l1(5, 10);
-    ft::list<int>::iterator it = l1.begin();
-    ft::list<int>::iterator it2 = l1.end();
+    ft::list<int> l1;
+    l1.push_back(5);
+    l1.push_back(9);
+    l1.push_back(0);
+    l1.push_back(1);
+    l1.push_back(3);
     ft::list<int> l;
 
     //std::list<int> s;
-    l.push_front(1);
+    l.push_front(8);
+    l.push_back(7);
     l.push_back(2);
-    l.push_back(1);
-    l.push_back(2);
-    l.push_front(555);
-    l.push_front(233);
+    l.push_back(6);
+    l.push_front(4);
+
+    l.sort();
+    l1.sort();
     l.merge(l1);
-    //ft::list<int>::iterator it = l.begin();
-    //l.insert(++it, 40);
+
     print(l);
     print(l1);
+    print(l);
 }

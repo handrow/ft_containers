@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 22:19:23 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/26 22:17:59 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,21 @@ namespace ft
     class list
     {
     public:
-        typedef _T                      value_type;
-        typedef _Allocator              allocator_type;
-        typedef size_t                  size_type;
-        typedef std::ptrdiff_t          difference_type;
-        typedef value_type&             reference;
-        typedef const value_type&       const_reference;
-        typedef value_type*             pointer;
-        typedef const value_type*       const_pointer;
-        typedef node_base<value_type>   node_type;
+        typedef _T                                  value_type;
+        typedef _Allocator                          allocator_type;
+        typedef size_t                              size_type;
+        typedef std::ptrdiff_t                      difference_type;
+        typedef value_type&                         reference;
+        typedef const value_type&                   const_reference;
+        typedef value_type*                         pointer;
+        typedef const value_type*                   const_pointer;
+        typedef node_base<value_type>               node_type;
         typedef typename allocator_type::template rebind<node_type>::other  node_allocator_type;
 
-        typedef list_iterator<value_type>         iterator;
-        typedef list_iterator<const value_type>   const_iterator;
-        typedef list_rev_iterator<iterator>       reverse_iterator;
-        typedef list_rev_iterator<const_iterator> const_rev_iterator;
+        typedef list_iterator<value_type>           iterator;
+        typedef list_iterator<const value_type>     const_iterator;
+        typedef list_rev_iterator<iterator>         reverse_iterator;
+        typedef list_rev_iterator<const_iterator>   const_rev_iterator;
 
     private:
         allocator_type          _allocator;
@@ -99,8 +99,8 @@ namespace ft
                 _tail->prev = node;
             }
         }
-    public:
 
+    public:
         // MEMBER FUNCTIONS
         list(const allocator_type& alloc=allocator_type());
         list(const list& other);
@@ -110,21 +110,21 @@ namespace ft
 
         list&               operator=(const list& other);
         void                assign(size_type count, const_reference value);
-        template < class IntputIt >
-        void                assign(IntputIt first, IntputIt last);
+        template< typename Tp, template <typename> class InputIt >
+        void                assign(InputIt<Tp> first, InputIt<Tp> last);
         
         // ELEMENT ACCESS
-        reference           front();
-        const_reference     front() const;
-        reference           back();
-        const_reference     back() const;
+        reference           front()             { return _head->data; }
+        const_reference     front() const       { return _head->data; }
+        reference           back()              { return _tail->prev->data; }
+        const_reference     back() const        { return _tail->prev->data; }
 
         // ITERATORS
-        iterator            begin()             { return *_head; }
-        iterator            end()               { return *_tail; }
+        iterator            begin()             { return _head; }
+        iterator            end()               { return _tail; }
 
-        const_iterator      begin() const       { return *_head; }
-        const_iterator      end() const         { return *_tail; }
+        const_iterator      begin() const       { return reinterpret_cast<node_base<const value_type>*>(_head); }
+        const_iterator      end() const         { return reinterpret_cast<node_base<const value_type>*>(_tail); }
 
         reverse_iterator    rbegin()            { return reverse_iterator(end()); }
         reverse_iterator    rend()              { return reverse_iterator(begin()); }
@@ -139,9 +139,9 @@ namespace ft
         
         // MODIFIERS
         void                clear();
-        iterator            insert(iterator pos, const_reference value);// check const_iterator
+        iterator            insert(iterator pos, const_reference value);
         void                insert(iterator pos, size_type count, const_reference value);
-        void                insert(iterator pos, iterator first, iterator last);
+        void                insert(iterator pos, iterator first, iterator last); // check standart
         iterator            erase(iterator pos);
         iterator            erase(iterator first, iterator last);
         void                push_front(const_reference value);
@@ -152,93 +152,22 @@ namespace ft
         void                swap(list& other);
 
         // OPERATIONS
-        // void                merge(list& other);
+        void                merge(list& other);
         // template <class CompareFunc>
-        // void                merge(list& other, CompareFunc comp)
-        // {
-        //     if (this == &other)
-        //         return;
-        //     iterator        firstThis = begin();
-        //     iterator        lastThis = end();
-        //     iterator        firstOther = other.begin();
-        //     iterator        lastOther = other.end();
-
-
-		// 	while (firstThis != lastThis && firstOther != lastOther)
-        //     {
-        //         if (comp(*firstOther, *firstThis))
-        //         {
-        //         }
-        //     }
-				
-        // }
+        // void                merge(list& other, CompareFunc comp);
         void                splice(const_iterator pos, list& other);
         void                splice(const_iterator pos, list& other, const_iterator it);
         void                splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
         void                remove(const_reference value);
         template<class UnaryPredicate>
-        void                remove_if(UnaryPredicate pred)
-        {
-            iterator    first = begin();
-            iterator    last = end();
-            
-            while (first != last)
-            {
-                if (pred(*first))
-                    first = erase(first);
-                else
-                    first++;
-            }
-        }
+        void                remove_if(UnaryPredicate pred);
         void                reverse();
         void                unique();
         template<class BinaryPredicate>
-        void                unique(BinaryPredicate p)
-        {
-            if (_size > 1)
-            {
-                iterator    i1 = begin();
-                iterator    i2 = i1;
-
-                while (++i1 != end())
-                {
-                    if (p(*i1,*i2))
-                    {
-                        erase(i1);
-                        i1 = i2;
-                    }
-                    else
-                        i2 = i1;
-                }
-            }
-        }
+        void                unique(BinaryPredicate p);
         void                sort();
         template<typename CompareFunc>
-        void 				sort(CompareFunc comp)
-        {
-            if (_size > 1)
-            {
-                iterator i1 = begin();
-                iterator i2 = i1;
-                iterator i3 = i2;
-
-                while(i1 != end())
-                {
-                    i2 = i1;
-                    i1++;
-                    i3 = i1;
-                    while(i1 != end() && !comp(*i2,*i1))
-                    {
-                        std::swap(*i1, *i2);
-                        if (i2 == begin())
-                            break ;
-                        i1 = i2;
-                        --i2;
-                    }
-                    i1 = i3;
-                }
-            }
-        }
+        void 				sort(CompareFunc comp);
     };
 
     template<typename T, typename Alloca>
@@ -295,14 +224,14 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    template<typename _InputIt>
-    void        list<T, Alloca>::assign(_InputIt first, _InputIt last)
+    template< typename Tp, template <typename> class InputIt >
+    void        list<T, Alloca>::assign(InputIt<Tp> first, InputIt<Tp> last)
     {
         clear();
         while (first != last)
             push_back(*first++);
     }
-
+    
     template<typename T, typename Alloca>
     void        list<T, Alloca>::clear()
     {
@@ -443,9 +372,27 @@ namespace ft
         other._node_allocator = our_node_alloc;
     }
 
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::merge(list& other)
+    {
+        if (this == &other)
+            return;
+        iterator        firstThis = begin();
+        iterator        lastThis = end();
+        iterator        firstOther = other.begin();
+        iterator        lastOther = other.end();
+
+        while (firstThis != lastThis && firstOther != lastOther)
+        {
+            
+        }
+    }
+
     // template<typename T, typename Alloca>
-    // void        list<T, Alloca>::merge(list& other)
+    // template <class CompareFunc>
+    // void        list<T, Alloca>::merge(list& other, CompareFunc comp)
     // {
+        
     // }
 
     template<typename T, typename Alloca>
@@ -513,6 +460,22 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
+    template<class UnaryPredicate>
+    void        list<T, Alloca>::remove_if(UnaryPredicate pred)
+    {
+        iterator    first = begin();
+        iterator    last = end();
+        
+        while (first != last)
+        {
+            if (pred(*first))
+                first = erase(first);
+            else
+                first++;
+        }
+    }
+
+    template<typename T, typename Alloca>
     void        list<T, Alloca>::reverse()
     {
         if (_size > 2)
@@ -554,9 +517,59 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    void       list<T, Alloca>::sort()
+    template<class BinaryPredicate>
+    void        list<T, Alloca>::unique(BinaryPredicate p)
+    {
+        if (_size > 1)
+        {
+            iterator    i1 = begin();
+            iterator    i2 = i1;
+
+            while (++i1 != end())
+            {
+                if (p(*i1,*i2))
+                {
+                    erase(i1);
+                    i1 = i2;
+                }
+                else
+                    i2 = i1;
+            }
+        }
+    }
+
+    template<typename T, typename Alloca>
+    void        list<T, Alloca>::sort()
     {
         sort(cmp<T>);
+    }
+
+    template<typename T, typename Alloca>
+    template<typename CompareFunc>
+    void        list<T, Alloca>::sort(CompareFunc comp)
+    {
+        if (_size > 1)
+        {
+            iterator i1 = begin();
+            iterator i2 = i1;
+            iterator i3 = i2;
+
+            while(i1 != end())
+            {
+                i2 = i1;
+                i1++;
+                i3 = i1;
+                while(i1 != end() && !comp(*i2,*i1))
+                {
+                    std::swap(*i1, *i2);
+                    if (i2 == begin())
+                        break ;
+                    i1 = i2;
+                    --i2;
+                }
+                i1 = i3;
+            }
+        }
     }
 
     template<typename T, typename Alloca>

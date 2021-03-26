@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stack.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 04:02:55 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 22:21:00 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/26 22:24:32 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ namespace ft
         typedef typename _Container::reference        reference;
         typedef typename _Container::const_reference  const_reference;
 
-    private:
+    protected:
         container_type  c;
 
     public:
@@ -41,15 +41,15 @@ namespace ft
         // ELEMENT ACCESS
         reference       top()                           { return c.back(); }
         const_reference top() const                     { return c.back(); }
-        
+
         // CAPACITY
         bool            empty() const                   { return c.empty(); }
         size_type       size() const                    { return c.size(); }
 
         // MODIFIERS
-        void            push(const value_type& value)   { c.push_back(value); }
+        void            push(const_reference value)     { c.push_back(value); }
         void            pop()                           { c.pop_back(); }
-        void            swap(stack& other);
+        void            swap(stack& other);////////////////
 
 
         friend bool     operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)

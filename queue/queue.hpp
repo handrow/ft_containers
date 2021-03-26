@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 06:19:03 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 07:51:26 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/26 22:24:23 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 namespace ft
 {
-    template< typename _T, typename _Allocator=std::allocator<_T>, class _Container=list<_T, _Allocator> > 
+    template< typename _T, class _Container=list<_T> > 
     class queue
     {
     public:
@@ -47,9 +47,9 @@ namespace ft
         size_type           size() const                    { return c.size(); }
 
         // MODIFIERS
-        void                push(const value_type& value)   { c.push_back(value); }
+        void                push(const_reference value)     { c.push_back(value); }
         void                pop()                           { c.pop_back(); }
-        void                swap(queue& other);
+        void                swap(queue& other); ///////////
 
         // NON-MEMBER FUNCTIONS
         friend bool     operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
@@ -85,7 +85,7 @@ namespace ft
     };
 
     template< class T, class Alloca, class Container >
-    void swap(queue<T,Alloca, Container>& x, queue<T,Alloca, Container>& y)
+    void swap(queue<T, Container>& x, queue<T, Container>& y)
     {
         x.swap(y);
     }

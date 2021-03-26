@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bidirectionalIterator.hpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 20:36:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/23 16:53:47 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/26 19:30:40 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ namespace ft
 
         list_iterator()                             : _ptr(NULL) { }
         list_iterator(const list_iterator& src)     : _ptr(src._ptr) { }
-        list_iterator(node_type &other)             : _ptr(&other) { }
+        list_iterator(node_type& other)             : _ptr(&other) { }
+        list_iterator(node_type* other)             : _ptr(other) { }
         ~list_iterator() { }
 
         template < template <typename> class _ConstIter>
