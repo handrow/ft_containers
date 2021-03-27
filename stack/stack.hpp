@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 04:02:55 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/26 22:24:32 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/27 16:56:26 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,8 @@ namespace ft
         // MODIFIERS
         void            push(const_reference value)     { c.push_back(value); }
         void            pop()                           { c.pop_back(); }
-        void            swap(stack& other);////////////////
 
-
+        // NON-MEMBER FUNCTIONS
         friend bool     operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
         {
             return x.c == y.c;
@@ -83,10 +82,5 @@ namespace ft
         }
 
     };
-    template< class T, class Container >
-    void swap(stack<T, Container>& x, stack<T, Container>& y)
-    {
-        x.swap(y);
-    }
 } // namespace ft
 

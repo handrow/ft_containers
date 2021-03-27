@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/26 22:17:59 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/27 20:24:22 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,8 +153,8 @@ namespace ft
 
         // OPERATIONS
         void                merge(list& other);
-        // template <class CompareFunc>
-        // void                merge(list& other, CompareFunc comp);
+        template <class CompareFunc>
+        void                merge(list& other, CompareFunc comp);
         void                splice(const_iterator pos, list& other);
         void                splice(const_iterator pos, list& other, const_iterator it);
         void                splice(const_iterator pos, list& other, const_iterator first, const_iterator last);
@@ -375,25 +375,31 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::merge(list& other)
     {
-        if (this == &other)
-            return;
-        iterator        firstThis = begin();
-        iterator        lastThis = end();
-        iterator        firstOther = other.begin();
-        iterator        lastOther = other.end();
-
-        while (firstThis != lastThis && firstOther != lastOther)
-        {
-            
-        }
+        merge(other, cmp<T>);
     }
 
-    // template<typename T, typename Alloca>
-    // template <class CompareFunc>
-    // void        list<T, Alloca>::merge(list& other, CompareFunc comp)
-    // {
-        
-    // }
+    template<typename T, typename Alloca>
+    template <class CompareFunc>
+    void        list<T, Alloca>::merge(list& other, CompareFunc comp)
+    {
+        if (this == &other)
+            return;
+        iterator        f1 = begin();
+        iterator        l1 = end();
+        iterator        f2 = other.begin();
+        iterator        l2 = other.end();
+
+        while (f1 != l1 && f2 != l2)
+        {
+            while (f1 != l1 && comp(*f1,*f2))
+                f1++;
+            node_type* dmitry = (node_type*)iterator::node_ptr(f2)->next;
+            splice(f1, other, f2);
+            f2 = dmitry;
+        }
+        if (f2 != l2)
+            splice(f1, other, f2, l2);
+    }
 
     template<typename T, typename Alloca>
     void        list<T, Alloca>::splice(const_iterator pos, list& other)
@@ -417,7 +423,7 @@ namespace ft
             node_type* end_insert = (node_type*)const_iterator::node_ptr(last);
             node_type* last_insert = end_insert->prev;
 
-            if (first_insert != last_insert)
+            if (first_insert != end_insert)
             {
                 // recalculate sizes
                 if (this != &other)

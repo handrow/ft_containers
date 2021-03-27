@@ -44,36 +44,72 @@ void test_splice()
     std::cout << std::endl;
 }
 
-void testFillConstructor()
+void testStdMerge()
 {
-    ft::list<int> l(5, 10);
+
+    std::cout << "STD LIST" << std::endl;
+    std::list<int> l1;
+    l1.push_back(-10);
+    l1.push_back(500);
+    l1.push_back(-400);
+    l1.push_back(12);
+    l1.push_back(3);
+
+    std::list<int> l;
+    l.push_front(0);
+    l.push_back(400);
+    l.push_back(2);
+    l.push_back(-10);
+    l.push_front(4);
+    l.push_front(0);
+    l.push_back(400);
+    l.push_back(2);
+    l.push_back(-10);
+    l.push_front(4);
+
+    l.sort();
+    l1.sort();
+    print(l);
+    print(l1);
+    l.merge(l1, std::less<int>());
+
+    print(l);
+}
+
+void testMyMerge()
+{
+    std::cout << "MY LIST" << std::endl;
+    ft::list<int> l1;
+    l1.push_back(-10);
+    l1.push_back(500);
+    l1.push_back(-400);
+    l1.push_back(12);
+    l1.push_back(3);
+
+    ft::list<int> l;
+    l.push_front(0);
+    l.push_back(400);
+    l.push_back(2);
+    l.push_back(-10);
+    l.push_front(4);
+    l.push_front(0);
+    l.push_back(400);
+    l.push_back(2);
+    l.push_back(-10);
+    l.push_front(4);
+
+    l.sort();
+    l1.sort();
+    print(l);
+    print(l1);
+    l.merge(l1, std::less<int>());
+
     print(l);
 }
 
 int main()
 {
     //test_splice();
-    //testFillConstructor();
-    ft::list<int> l1;
-    l1.push_back(5);
-    l1.push_back(9);
-    l1.push_back(0);
-    l1.push_back(1);
-    l1.push_back(3);
-    ft::list<int> l;
-
-    //std::list<int> s;
-    l.push_front(8);
-    l.push_back(7);
-    l.push_back(2);
-    l.push_back(6);
-    l.push_front(4);
-
-    l.sort();
-    l1.sort();
-    l.merge(l1);
-
-    print(l);
-    print(l1);
-    print(l);
+    testStdMerge();
+    testMyMerge();
 }
