@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 06:19:03 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/27 16:56:48 by handrow          ###   ########.fr       */
+/*   Updated: 2021/03/29 20:09:36 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,32 +51,32 @@ namespace ft
         void                pop()                           { c.pop_back(); }
 
         // NON-MEMBER FUNCTIONS
-        friend bool     operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
+        friend bool         operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
         {
             return x.c == y.c;
         }
 
-        friend bool     operator!=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
+        friend bool         operator!=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return !(x == y);
         }
 
-        friend bool     operator<(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
+        friend bool         operator<(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return x.c < y.c;
         }
 
-        friend bool     operator<=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
+        friend bool         operator<=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return !(y > x);
         }
 
-        friend bool     operator>(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
+        friend bool         operator>(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return y < x;
         }
 
-        friend bool     operator>=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
+        friend bool         operator>=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return !(x < y);
         }
