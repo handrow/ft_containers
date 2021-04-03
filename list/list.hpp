@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/27 20:24:22 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/03 17:04:52 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ namespace ft
 
     template<typename T, typename Alloca>
     list<T, Alloca>::list(iterator first, iterator last, const allocator_type& alloc)
-    : _allocator(alloc), _head(createNewNode()), _tail(_head), _size(countDist(first, last))
+    : _allocator(alloc), _head(createNewNode()), _tail(_head), _size(0)
     {
         while (first != last)
             push_back(*first++);
