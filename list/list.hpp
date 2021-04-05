@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/03 17:04:52 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/05 17:23:23 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -581,7 +581,7 @@ namespace ft
     template<typename T, typename Alloca>
     bool        operator==(const list<T,Alloca>& x, const list<T,Alloca>& y)
     {
-        if (x._size != y._size)
+        if (x.size() != y.size())
             return false;
 
         typename list<T, Alloca>::const_iterator  x_first = x.begin();
@@ -605,7 +605,7 @@ namespace ft
 
         for (; x_first != x_last; ++x_first, ++y_first)
         {
-            if (*x_first == *y_first || cmp(*x_first, *y_first))
+            if (cmp(*x_first, *y_first))
                 return true;
             if (cmp(*y_first, *x_first))
                 return false;
@@ -622,13 +622,24 @@ namespace ft
     template<typename T, typename Alloca>
     bool        operator>(const list<T,Alloca>& x, const list<T,Alloca>& y)
     {
-        return y < x;
+        typename list<T, Alloca>::const_iterator  x_first = x.begin();
+        typename list<T, Alloca>::const_iterator  x_last = x.end();
+        typename list<T, Alloca>::const_iterator  y_first = y.begin();
+
+        for (; x_first != x_last; ++x_first, ++y_first)
+        {
+            if (cmp(*x_first, *y_first))
+                return false;
+            if (cmp(*y_first, *x_first))
+                return true;
+        }
+        return false;
     }
 
     template<typename T, typename Alloca>
     bool        operator<=(const list<T,Alloca>& x, const list<T,Alloca>& y)
     {
-        return !(y < x);
+        return  !(x > y);
     }
 
     template<typename T, typename Alloca>
