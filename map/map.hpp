@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 17:25:19 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/30 21:36:13 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/05 21:03:42 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,6 @@
 
 namespace ft
 {
-
-    template<class K, class V>
-    struct node
-    {
-        K           key;
-        V           value;
-        node<K, V>  left;
-        node<K, V>  rigth;
-        node<K, V>  parent;
-        bool        isLeftChild;
-        bool        black; // if true, the node is black else the node is red
-        pair<K, V>  pair;
-        
-        node(K _k, V _v) 
-        :   key(_k), 
-            value(_v),
-            left(NULL),
-            rigth(NULL),
-            parent(NULL),
-            isLeftChild(false),
-            black(false)
-            pair(pair.make_pair<K, V>) {}
-    };
-    
     template<class K, class V>
     struct pair
     {
@@ -115,7 +91,7 @@ namespace ft
         }
     };
 
-    template <class Key, class T, class Compare=std::less<Key>, class Allocator=std::allocator<std::pair<const Key, T> > >
+    template <class Key, class T, class Compare=std::less<Key>, class Allocator=std::allocator<pair<const Key, T> > >
     class map
     {
     public:
@@ -139,22 +115,7 @@ namespace ft
         key_compare         _comp;
         node_type           _root;
         size_type           _size;
-    
-        void    insertNode(K _k, V _v)
-        {
-            node<K, V> newNode = _node_allocator.allocate(1);
-            if (_root == NULL)
-            {
-                _root = newNode;
-                root.black = true;
-                ++_size;
-            }
-            else
-            {
-                insertNode(_root, newNode);
-                ++_size;
-            }
-        }
+
     public:
         // MEMBER FUNCTIONS
         map();

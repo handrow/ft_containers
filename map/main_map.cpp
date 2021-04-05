@@ -1,2 +1,7 @@
 #include <map>
-#include <utility>
+#include "red_black_tree.hpp"
+
+int main()
+{
+    ft::RBT<int> tree;
+}
