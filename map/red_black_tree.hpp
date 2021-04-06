@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   red_black_tree.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/05 18:08:08 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/06 20:51:52 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/07 00:37:43 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,42 +81,46 @@ namespace ft
                 return n->parent->left;
         }
 
-        void            rotateLeft(node_pointer root, node_pointer n)
+        void            rotateLeft(node_pointer n)
         {
             node_pointer pivot = n->right;
  
-            n->right = pivot->left;
-            if (n->right != NULL)
-                n->right->parent = n;
             pivot->parent = n->parent;
-            if (n->parent == NULL)
-                root = pivot;
-            else if (n == n->parent->left)
-                n->parent->left = pivot;
-            else
-                n->parent->right = pivot;
+            if (n->parent != NULL)
+            {
+                if (n->parent->left == n)
+                    n->parent->left = pivot;
+                else
+                    n->parent->right = pivot;
+            }
 
-            pivot->left = n;
+            n->right = pivot->left;
+            if (pivot->left != NULL)
+                pivot->left->parent = n;
+            
             n->parent = pivot;
+            pivot->left = n;
         }
 
-        void            rotateRight(node_pointer root, node_pointer n)
+        void            rotateRight(node_pointer n)
         {
             node_pointer pivot = n->left;
-            
-            n->left = pivot->right;
-            if (n->left != NULL)
-                n->left->parent = n;
+
             pivot->parent = n->parent;
-            if (n->parent == NULL)
-                root = pivot;
-            else if (n == n->parent->left)
-                n->parent->left = pivot;
-            else
-                n->parent->right = n;
-            
-            pivot->right = n;
+            if (n->parent != NULL)
+            {
+                if (n->parent->left == n)
+                    n->parent->left = pivot;
+                else
+                    n->parent->right = pivot;
+            }
+
+            n->left = pivot->right;
+            if (pivot->right != NULL)
+                pivot->right->parent = n;
+
             n->parent = pivot;
+            pivot->right = n;
         }
     
         node_pointer    search(const_reference value)
@@ -136,102 +140,78 @@ namespace ft
             }
             return NULL;
         }
-        
-        void            fixViolation(node_pointer root, node_pointer n)
-        {
-            node_pointer   nParent = NULL;
-            node_pointer   nGgrandparent = NULL;
 
-            while (n != root && n->color != BLACK && n->parent->color == RED)
-            {
-                nParent = n->parent;
-                nGgrandparent = grandparent(n);
-                
-                // Case A: nParent is left child of nGrandparent
-                if (nParent == nGgrandparent->left)
-                {
-                    node_pointer nUncle = nGgrandparent->right;
-                    // Case 1: nUncle is red -> flip color
-                    if (nUncle != NULL && nUncle->color == RED)
-                    {
-                        nGgrandparent->color = RED;
-                        nParent->color = BLACK;
-                        nUncle->color = BLACK;
-                        n = nGgrandparent;
-                    }
-                    else
-                    {
-                        // Case 2: n is right child -> left rotation required
-                        if (n == nParent->right)
-                        {
-                            rotateLeft(root, nParent);
-                            n = nParent;
-                            nParent = n->parent;
-                        }
-                        // Case 3: n is left child -> right rotation required
-                        rotateRight(root, nGgrandparent);
-                        std::swap(nParent->color, nGgrandparent->color);
-                        n = nParent;
-                    }
-                }
-            
-                // Case B: nParent is right child of nGrandparent
-                else
-                {
-                    node_pointer nUncle = nGgrandparent->left;
-                    // Case 1: uncle is red -> flip color
-                    if (nUncle != NULL && nUncle->color == RED)
-                    {
-                        nGgrandparent->color = RED;
-                        nParent->color = BLACK;
-                        nUncle->color = BLACK;
-                        n = nGgrandparent;
-                    }
-                    else
-                    {
-                        // Case 2: n is left child -> right rotation required
-                        if  (n == nParent->left)
-                        {
-                            rotateRight(root, nParent);
-                            n = nParent;
-                            nParent = n->parent;
-                        }
-                        // Case 3: n is right child ->left rotation required
-                        rotateLeft(root, nGgrandparent);
-                        std::swap(nParent->color, nGgrandparent->color);
-                        n = nParent;
-                    }
-                }
-            }
-            root->color = BLACK;
-        }
-
-        node_pointer    RBT_insert(node_pointer root, node_pointer newNode)
-        {
-            if (root == NULL)
-                return newNode;
-            
-            if (newNode->data < root->data)
-            {
-                root->left = RBT_insert(root->left, newNode);
-                root->left->parent = root;
-            }
-            else if (newNode->data > root->data)
-            {
-                root->right = RBT_insert(root->right, newNode);
-                root->right->parent = root;
-            }
-            return root;
-        }
-
-        void            insert(const_reference val)
+        void            insertCase1(node_pointer n);
+        void            insertCase2(node_pointer n);
+        void            insertCase3(node_pointer n);
+        void            insertCase4(node_pointer n);
+        void            insertCase5(node_pointer n);
+        void            insert(node_pointer val)
         {
             node_pointer newNode = new node_type(val);
-            
-            root = RBT_insert(root, newNode);
-            fixViolation(root, newNode);
         }
     };
 
+    void    RBT::insertCase1(node_pointer n)
+    {
+        if (n->parent == NULL)
+            n->color = BLACK;
+        else
+            insertCase2(n);
+    }
+
+    void    RBT::insertCase2(node_pointer n)
+    {
+        if (n->parent->color == BLACK)
+            return;
+        else
+            insertCase3(n);
+    }
+
+    void    RBT::insertCase3(node_pointer n)
+    {
+        node_pointer    u = uncle(n);
+        node_pointer    g;
+
+        if (u != NULL && u->color == RED)
+        {
+            n->parent->color = BLACK;
+            u->color = BLACK;
+            g = grandparent(n);
+            g->color = RED;
+            insertCase1(g);
+        }
+        else
+            insertCase4(n);
+    }
+
+    void    RBT::insertCase4(node_pointer n)
+    {
+        node_pointer g = grandparent(n);
+        
+        if ((n == n->parent->right) && (n->parent == g->left))
+        {
+            rotateLeft(n->parent);
+            n = n->left;
+        }
+        else if ((n == n->parent->left) && (n->parent == g->right))
+        {
+            rotateRight(n->parent);
+            n = n->right;
+        }
+        insertCase5(n);
+    }
+
+    void    RBT::insertCase5(node_pointer n)
+    {
+        node_pointer g = grandparent(n);
+        
+        n->parent->color = BLACK;
+        g->color = RED;
+        if ((n == n->parent->left) && (n->parent == g->left))
+            rotateRight(g);
+        else
+            rotateLeft(g);
+    }    
     
 } // namespace ft
