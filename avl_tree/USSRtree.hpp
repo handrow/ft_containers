@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstddef>
 #include <memory>
 #include <algorithm>
 #include <iostream>
@@ -8,7 +7,7 @@
 namespace ft
 {
 
-    template<typename T, typename Comp>
+    template<typename T, typename Comp=std::less<T> >
     class AVLnode
     {
     private:
@@ -21,21 +20,25 @@ namespace ft
         int         h;
 
     public:
+        // <
         bool compare(const AVLnode& other) const
         {
             return compare(other.data);
         }
         
+        // <
         bool compare(const T& other_data) const
         {
             return __cmp_func(data, other_data);
         }
 
+        // >
         bool compare_r(const AVLnode& other) const
         {
             return compare_r(other.data);
         }
 
+        // >
         bool compare_r(const T& other_data) const
         {
             return __cmp_func(other_data, data);
@@ -47,7 +50,8 @@ namespace ft
             return other != NULL ? other->h : 0;
         }
 
-        int bfactor() const {
+        int bfactor() const
+        {
             return get_height(left) - get_height(right);
         }
 
@@ -57,7 +61,7 @@ namespace ft
         }
     };
 
-    template <typename T, typename Comp = std::less<T> , typename Allocator = std::allocator<T> >
+    template <typename T, typename Comp=std::less<T> , typename Allocator=std::allocator<T> >
     class AVLtree
     {
     public:
@@ -85,8 +89,7 @@ namespace ft
             _node_alloc.deallocate(node, 1);
         }
 
-        // must return new subroot
-        // to use it, make like this: node = rotate_left(node);
+
         static NodeType*    _rotate_l(NodeType* subroot)
         {
             NodeType*   new_subroot = subroot->right;
@@ -137,16 +140,10 @@ namespace ft
             return _balance(subroot);
         }
 
-        static NodeType*    _find_max(NodeType* subroot)
-        {
-            return subroot->right == NULL ? subroot
-                                          : _find_max(subroot->right);
-        }
-
         static NodeType*    _delete_max(NodeType* subroot, NodeType*& deleted)
         {
             if (subroot->right == NULL)
-                return deleted = subroot, NULL;
+                return deleted = subroot, (NodeType*)NULL;
             
             subroot->right = _delete_max(subroot->right, deleted);
             return _balance(subroot);
@@ -164,38 +161,76 @@ namespace ft
             {
                 deleted = subroot;
                 if (subroot->left == NULL)
-                    return subroot->left;
-                subroot->left = _delete_max(subroot->left, subroot);
+                    return subroot->right;
+                deleted->left = _delete_max(subroot->left, subroot);
                 subroot->right = deleted->right;
                 subroot->left = deleted->left;
             }
             return _balance(subroot);
         }
 
+        static NodeType*    _search(NodeType* subroot, const T& data)
+        {
+            if (subroot == NULL)
+                return NULL;
+            else if (subroot->compare(data)) // this < data
+                return _search(subroot->right, data);
+            else if (subroot->compare_r(data)) // this > data
+                return _search(subroot->left, data);
+            else // this == data
+                return subroot;
+        }
+
+        // HELPFULL A LOT
+        static void printBT(const std::string& prefix, const NodeType* node, bool isLeft)
+        {
+            if( node != NULL )
+            {
+                std::cout << prefix;
+
+                std::cout << (isLeft ? "├──" : "└──" );
+
+                // print the value of the node
+                std::cout << node->data;
+                std::cout << std::endl;
+
+                // enter the next tree level - left and right branch
+                printBT( prefix + (isLeft ? "│   " : "    "), node->right, true);
+                printBT( prefix + (isLeft ? "│   " : "    "), node->left, false);
+            }
+        }
+
     public:
+        // HELPFUL A LOT
+        void printBT() const
+        {
+            printBT("", _root, false);    
+        }
 
-        AVLtree() : _root(NULL) {};
+        AVLtree() : _root(NULL)
+        {
+        }
 
-        void insert(const T& data) {
+        void insert(const T& data)
+        {
             NodeType* node = _new_node();
 
             _data_alloc.construct(&node->data, data);
             _root = _insert(_root, node);
         }
 
-        void remove(const T& data) {
+        void remove(const T& data)
+        {
             NodeType* deleted;
             _root = _delete(_root, data, deleted);
-            _node_alloc.destroy(&deleted);
-            _node_alloc.deallocate(&deleted, 1);
+            _node_alloc.destroy(deleted);
+            _node_alloc.deallocate(deleted, 1);
         }
 
-        void print(NodeType *node = _root) const {
-            if (node == NULL)
-                return 0;
-            print(node->left)
+        bool contains(const T& data)
+        {
+            return _search(_root, data);
         }
-
     };
 
 } // namespace ft
