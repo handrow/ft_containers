@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/05 17:23:23 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/11 16:06:32 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,8 @@ namespace ft
     template<typename T, typename Alloca>
     list<T, Alloca>&    list<T, Alloca>::operator=(const list& other)
     {
-        assign(other.begin(), other.end());
+        if (this != &other)
+            assign(other.begin(), other.end());
         return *this;
     }
 
