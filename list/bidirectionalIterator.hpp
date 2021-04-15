@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 20:36:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/26 19:30:40 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/15 13:05:18 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ namespace ft
         }
 
     private:
-        node_type*               _ptr;
+        node_type*  _ptr;
 
     public:
 
@@ -89,7 +89,7 @@ namespace ft
 
         list_rev_iterator()                             : _iter(NULL) { }
         list_rev_iterator(const list_rev_iterator& src) : _iter(src._iter) { }
-        //list_rev_iterator(_Node &other)               : _iter(&other) { }
+        list_rev_iterator(Iter other)                   : _iter(other) { }
         ~list_rev_iterator() { }
 
         Iter                base() const                            { return _iter; }

@@ -1,23 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   USSRtree.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
+/*   Updated: 2021/04/12 20:02:03 by handrow          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include <memory>
-#include <algorithm>
 #include <iostream>
 
 namespace ft
 {
 
-    template<typename T, typename Comp=std::less<T> >
+    template<class T>
+    struct less
+    {
+        bool operator()(const T& x, const T& y) const
+        {
+            return x < y;
+        }
+    };
+
+    template<class T>
+    const T& _max(const T& a, const T& b)
+    {
+        return (a > b) ? a : b;
+    }
+
+    template<typename T, typename Comp=less<T> >
     class AVLnode
     {
     private:
-        Comp        __cmp_func;
+        Comp         __cmp_func;
 
     public:
         AVLnode*     left;
         AVLnode*     right;
-        T           data;
-        int         h;
+        T            data;
+        int          h;
 
     public:
         // <
@@ -57,15 +83,15 @@ namespace ft
 
         void fix_height()
         {
-            h = std::max(get_height(left), get_height(right)) + 1;
+            h = _max(get_height(left), get_height(right)) + 1;
         }
     };
 
-    template <typename T, typename Comp=std::less<T> , typename Allocator=std::allocator<T> >
+    template <typename T, typename Comp=less<T> , typename Allocator=std::allocator<T> >
     class AVLtree
     {
     public:
-        typedef AVLnode<T, Comp>                                         NodeType;
+        typedef AVLnode<T, Comp>                                        NodeType;
         typedef Allocator                                               DataAllocator;
         typedef typename Allocator::template rebind<NodeType>::other    NodeAllocator;
 
@@ -75,7 +101,7 @@ namespace ft
         NodeType*           _root;
 
     private:
-        NodeType*       _new_node()
+        NodeType*           _new_node()
         {
             NodeType* empty_node = _node_alloc.allocate(1);
             empty_node->left = NULL;
@@ -84,7 +110,7 @@ namespace ft
             return empty_node;
         }
 
-        void            _delete_node(NodeType* node)
+        void                _delete_node(NodeType* node)
         {
             _node_alloc.deallocate(node, 1);
         }
@@ -182,7 +208,7 @@ namespace ft
         }
 
         // HELPFULL A LOT
-        static void printBT(const std::string& prefix, const NodeType* node, bool isLeft)
+        static void         printBT(const std::string& prefix, const NodeType* node, bool isLeft)
         {
             if( node != NULL )
             {

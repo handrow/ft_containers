@@ -6,19 +6,19 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/24 10:42:50 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/17 12:30:10 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <memory>
 #include <exception>
 #include "randomAccessIterator.hpp"
+ #include "../allocator.hpp"
 
 namespace ft
 {
-    template < typename _T, typename _Allocator=std::allocator<_T> >
+    template < typename _T, typename _Allocator=ft::allocator<_T> >
     class vector
     {
     public:
@@ -31,10 +31,10 @@ namespace ft
         typedef value_type*                         pointer;
         typedef const value_type*                   const_pointer;
         typedef ptrdiff_t                           difference_type;
+        typedef iterator<const value_type>          const_iterator;
         typedef iterator<value_type>                iterator;
-        typedef const iterator                      const_iterator;
+        typedef reverse_iterator<const_iterator>    const_reverse_iterator;
         typedef reverse_iterator<iterator>          reverse_iterator;
-        typedef const reverse_iterator              const_reverse_iterator;
         // need to check last insert capacity and operator<
     private:
         allocator_type                              allocator;
@@ -96,7 +96,7 @@ namespace ft
 
         // CAPACITY
     
-        bool                empty() const                   { return !(length); }
+        bool                empty() const                   { return !length; }
         size_type           size() const                    { return length; }
         size_type           max_size() const                { return allocator.max_size(); }
         size_type           capacity() const                { return cap; }
@@ -138,10 +138,10 @@ namespace ft
         template<typename T, typename Alloca>
         friend bool    operator<(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
         {
-            const_iterator f1 = x.begin();
-	        const_iterator l1 = x.end();
-	        const_iterator f2 = y.begin();
-	        const_iterator l2 = y.end();
+            typename vector<T, Alloca>::const_iterator f1 = x.begin();
+	        typename vector<T, Alloca>::const_iterator l1 = x.end();
+	        typename vector<T, Alloca>::const_iterator f2 = y.begin();
+	        typename vector<T, Alloca>::const_iterator l2 = y.end();
 
             for (; f1 != l1; f1++, f2++)
             {
@@ -156,7 +156,7 @@ namespace ft
         template<typename T, typename Alloca>
         friend bool    operator<=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
         {
-            return x.data <= y.data;
+            return !(x > y);
         }
 
         template<typename T, typename Alloca>
@@ -168,7 +168,7 @@ namespace ft
         template<typename T, typename Alloca>
         friend bool    operator>=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
         {
-            return !(x <= y);
+            return !(x < y);
         }
     };
 

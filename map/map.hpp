@@ -6,14 +6,16 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 17:25:19 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/05 21:03:42 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/15 05:56:56 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
-#include <memory>
+#include "../allocator.hpp"
+#include "../avl_tree/USSRtree.hpp"
+#include "bidirectional_iterator.hpp"
 
 namespace ft
 {
@@ -44,33 +46,33 @@ namespace ft
             return pair<K, V>(key, value);
         }
 
-        friend bool         operator==(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // friend bool         operator==(const pair& x, const pair& y)
+        // {
             
-        }
-        friend bool         operator!=(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // }
+        // friend bool         operator!=(const pair& x, const pair& y)
+        // {
             
-        }
-        friend bool         operator<(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // }
+        // friend bool         operator<(const pair& x, const pair& y)
+        // {
             
-        }
-        friend bool         operator<=(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // }
+        // friend bool         operator<=(const pair& x, const pair& y)
+        // {
             
-        }
-        friend bool         operator>(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // }
+        // friend bool         operator>(const pair& x, const pair& y)
+        // {
             
-        }
-        friend bool         operator>=(const pair<T1,T2>& x, const pair<T1,T2>& y)
-        {
+        // }
+        // friend bool         operator>=(const pair& x, const pair& y)
+        // {
             
-        }
+        // }
     };
 
-    template<class Key, class T, class Compare=std::less<Key>, class Allocator=std::allocator<pair<const Key, T> > >
+    template<class Key, class T, class Compare=less<Key>, class Allocator=ft::allocator<pair<const Key, T> > >
     class value_compare
     {
     public:
@@ -91,7 +93,7 @@ namespace ft
         }
     };
 
-    template <class Key, class T, class Compare=std::less<Key>, class Allocator=std::allocator<pair<const Key, T> > >
+    template <class Key, class T, class Compare=less<Key>, class Allocator=ft::allocator<pair<const Key, T> > >
     class map
     {
     public:
@@ -106,34 +108,34 @@ namespace ft
         typedef const value_type&                  const_reference;
         typedef value_type*                        pointer;
         typedef const value_type*                  const_pointer;
-        typedef node<key_type, mapped_type>        node_type;
+        typedef AVLtree<value_type, key_compare>   tree_type;
+        typedef typename tree_type::NodeType       node_type;
         typedef typename allocator_type::template  rebind<node_type>::other node_allocator_type;
+        typedef map_iterator<value_type, node_type> iterator;
 
     private:
         allocator_type      _allocator;
         node_allocator_type _node_allocator;
         key_compare         _comp;
-        node_type           _root;
+        tree_type           _tree;
         size_type           _size;
 
     public:
         // MEMBER FUNCTIONS
-        map();
+        map() {}
         map(const key_compare& comp, const allocator_type& alloc=allocator_type());
         map(const map& other);
-        ~map();
+        ~map() {}
+
+
+    //     ITERATORS
+        // iterator begin() {}
+    
+        // CAPACITY
+        bool        empty() const       { return !_size; }
+        size_type   size() const        { return _size; }
+        size_type   max_size() const    { return _node_allocator.max_size(); }
+
     };
 
-    template<class Key, class T, class Compare, class Alloca>
-    map<Key, T, Compare, Alloca>::map(const key_compare& comp, const allocator_type& alloc)
-    : _allocator(alloc), _comp(comp), _root(NULL), _size(0)
-    { 
-    }
-    
-    template<class Key, class T, class Compare, class Alloca>
-    map<Key, T, Compare, Alloca>::map(const map& other)
-    : _allocator(other._allocator), _node_allocator(other._node_allocator), _comp(other._comp), _root(other._root), _size(other._size)
-    {
-        
-    }
 } // namespace ft

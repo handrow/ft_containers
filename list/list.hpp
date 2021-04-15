@@ -6,15 +6,15 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/11 16:06:32 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/15 14:54:51 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <memory>
 #include "bidirectionalIterator.hpp"
 #include <iostream>
+#include "../allocator.hpp"
 namespace ft
 {
 
@@ -30,7 +30,7 @@ namespace ft
         return a < b;
     }
 
-    template< typename _T, typename _Allocator=std::allocator<_T> >
+    template< typename _T, typename _Allocator=ft::allocator<_T> >
     class list
     {
     public:
@@ -139,7 +139,7 @@ namespace ft
         
         // MODIFIERS
         void                clear();
-        iterator            insert(iterator pos, const_reference value);
+        iterator            insert(const_iterator pos, const_reference value);
         void                insert(iterator pos, size_type count, const_reference value);
         void                insert(iterator pos, iterator first, iterator last); // check standart
         iterator            erase(iterator pos);
@@ -241,7 +241,7 @@ namespace ft
     }
     
     template<typename T, typename Alloca>
-    typename    list<T, Alloca>::iterator  list<T, Alloca>::insert(iterator pos, const_reference value)
+    typename    list<T, Alloca>::iterator  list<T, Alloca>::insert(const_iterator pos, const_reference value)
     {
         if (pos == begin())
         {
@@ -249,7 +249,7 @@ namespace ft
             return begin();
         }
         node_type *ptr = createNewNode();
-        node_type *post_insert = iterator::node_ptr(pos);
+        node_type *post_insert = (node_type *)const_iterator::node_ptr(pos);
         ptr->prev = post_insert->prev;
         ptr->next = post_insert;
         _allocator.construct(&ptr->data, value);
@@ -394,9 +394,9 @@ namespace ft
         {
             while (f1 != l1 && comp(*f1,*f2))
                 f1++;
-            node_type* dmitry = (node_type*)iterator::node_ptr(f2)->next;
+            node_type* next_node = (node_type*)iterator::node_ptr(f2)->next;
             splice(f1, other, f2);
-            f2 = dmitry;
+            f2 = next_node;
         }
         if (f2 != l2)
             splice(f1, other, f2, l2);
