@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocator.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 02:20:43 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/15 09:09:00 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/19 04:53:05 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ namespace ft
         pointer         address(reference x) const                          { return &x; }
         const_pointer   address(const_reference x) const                    { return &x; }
         pointer         allocate(size_type n)                               { return static_cast<pointer>(::operator new(n * sizeof(value_type))); }
-        void            deallocate(pointer p, size_type n)                  { ::operator delete(p, &n); }
+        void            deallocate(pointer p, size_type)                    { ::operator delete(p); }
         size_type       max_size() const throw()                            { return static_cast<size_type>(-1) / sizeof(value_type); }
+        void            construct(pointer p)                                { new((void *)p) value_type(); }
         void            construct(pointer p, const_reference val)           { new((void *)p) value_type(val); }
         void            destroy(pointer p)                                  { p->~value_type(); }
     };

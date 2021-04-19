@@ -1,44 +1,58 @@
 #include "USSRtree.hpp"
 #include <map>
 
+template <typename K, typename V>
+struct pair_less
+{
+    bool operator()(const std::pair<K,V>& a, const std::pair<K,V>& b) const
+    {
+        return a.first < b.first;
+    }
+};
+
+template <typename btree_with_pair>
+void print_map(const btree_with_pair& tree)
+{
+    for (typename btree_with_pair::iterator it = tree.begin();
+        !it.is_equal(tree.end());
+        it.next()
+    ) {
+        std::cout << "{" << it.get_data_ref().first << ", " << it.get_data_ref().second << "} ";
+    }
+    std::cout << std::endl;
+}
+
+template <typename btree>
+void print_set(const btree& tree)
+{
+    for (typename btree::iterator it = tree.begin();
+        !it.is_equal(tree.end());
+        it.next()
+    ) {
+        std::cout << it.get_data_ref() << " ";
+    }
+    std::cout << std::endl;
+}
+
+typedef ft::AVLtree<std::pair<std::string, int>, pair_less<std::string, int> >           my_map;
+typedef ft::AVLtree<std::pair<std::string, int>, pair_less<std::string, int> >::iterator my_map_iter;
+
+typedef ft::AVLtree<std::string>            my_set;
+typedef ft::AVLtree<std::string>::iterator  my_set_iter;
+
 int main(void) {
-    ft::AVLtree<int>  tree;
+    my_map tree;
 
-    tree.insert(1);
-    tree.insert(2);
-    tree.insert(3);
-    tree.insert(4);
-    tree.insert(5);
-    tree.insert(6);
-    tree.insert(7);
-    tree.insert(8);
-    tree.insert(9);
-    tree.insert(10);
+    tree.insert(std::make_pair("a", 1));
+    tree.insert(std::make_pair("b", 2));
+    tree.insert(std::make_pair("c", 3));
+    tree.insert(std::make_pair("d", 4));
+    tree.insert(std::make_pair("e", 5));
+    tree.insert(std::make_pair("lol", 1000));
+    tree.insert(std::make_pair("lol", 1001));
+    tree.insert(std::make_pair("lol", 1002));
+    tree.insert(std::make_pair("lol", 1003));
+    print_map(tree);
 
-    tree.printBT();
-    tree.remove(1);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(2);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(3);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(4);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(5);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(6);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(7);
-    std::cout << "=================\n";
-    tree.printBT();
-    tree.remove(8);
-    std::cout << "=================\n";
-    tree.printBT();
     return 0;
 }

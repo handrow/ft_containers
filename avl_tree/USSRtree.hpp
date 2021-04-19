@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   USSRtree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/12 20:02:03 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/19 04:33:40 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <memory>
 #include <iostream>
+#include "../stack/stack.hpp"
+#include "../allocator.hpp"
 
 namespace ft
 {
@@ -28,7 +29,7 @@ namespace ft
     };
 
     template<class T>
-    const T& _max(const T& a, const T& b)
+    const T& max(const T& a, const T& b)
     {
         return (a > b) ? a : b;
     }
@@ -83,13 +84,116 @@ namespace ft
 
         void fix_height()
         {
-            h = _max(get_height(left), get_height(right)) + 1;
+            h = max(get_height(left), get_height(right)) + 1;
         }
     };
 
-    template <typename T, typename Comp=less<T> , typename Allocator=std::allocator<T> >
+    template <typename T, typename Comp=less<T> , typename Allocator=ft::allocator<T> >
     class AVLtree
     {
+    public:
+        struct iterator
+        {
+            typedef AVLnode<T, Comp>      NodeType;
+
+            stack<NodeType*>    _fwd;
+            stack<NodeType*>    _rev;
+            NodeType*           _curnode;
+            NodeType*           _end;
+            NodeType*           _rend;
+
+            iterator(const AVLtree& tree)
+            : _fwd(), _rev()
+            , _curnode(tree._root)
+            , _end(tree._end_node)
+            , _rend(tree._rend_node)
+            {
+            }
+
+            bool    is_equal(const iterator& other) const
+            {
+                return _curnode == other._curnode;
+            }
+
+            iterator&    next()
+            {
+                if (_curnode->right)
+                {
+                    move_to_right();
+                    move_to_min();
+                }
+                else if (!_fwd.empty())
+                {
+                    _curnode = _fwd.top();
+                    _fwd.pop();
+                    while (!_rev.empty() && _curnode->h > _rev.top()->h)
+                        _rev.pop();
+                }
+                else if (_curnode != _end)
+                {
+                    _rev.push(_curnode);
+                    _curnode = _end;
+                }
+                return *this;
+            }
+
+            iterator&    prev()
+            {
+                if (_curnode->left)
+                {
+                    move_to_left();
+                    move_to_max();
+                }
+                else if (!_rev.empty())
+                {
+                    _curnode = _rev.top();
+                    _rev.pop();
+                    while (!_fwd.empty() && _curnode->h > _fwd.top()->h) // delete old parents in other stack
+                        _fwd.pop();
+                }
+                else if (_curnode != _rend) // if we are already on the rend, then we can't go prev
+                {
+                    _fwd.push(_curnode);
+                    _curnode = _rend;
+                }
+                return *this;
+            }
+
+            void    move_to_max()
+            {
+                while (_curnode->right != NULL)
+                    move_to_right();
+            }
+
+            void    move_to_min()
+            {
+                while (_curnode->left != NULL)
+                    move_to_left();
+            }
+
+            void    move_to_left()
+            {
+                _fwd.push(_curnode);
+                _curnode = _curnode->left;
+            }
+
+            void    move_to_right()
+            {
+                _rev.push(_curnode);
+                _curnode = _curnode->right;
+            }
+        
+            T&      get_data_ref() const
+            {
+                return _curnode->data;
+            }
+
+            const T& get_data_const_ref() const
+            {
+                return _curnode->data;
+            }
+        };
+
     public:
         typedef AVLnode<T, Comp>                                        NodeType;
         typedef Allocator                                               DataAllocator;
@@ -98,6 +202,8 @@ namespace ft
     private:
         DataAllocator       _data_alloc;
         NodeAllocator       _node_alloc;
+        NodeType*           _end_node; // fake node
+        NodeType*           _rend_node; // fake node
         NodeType*           _root;
 
     private:
@@ -114,7 +220,6 @@ namespace ft
         {
             _node_alloc.deallocate(node, 1);
         }
-
 
         static NodeType*    _rotate_l(NodeType* subroot)
         {
@@ -195,46 +300,111 @@ namespace ft
             return _balance(subroot);
         }
 
-        static NodeType*    _search(NodeType* subroot, const T& data)
+        static NodeType*    _cleanup_tree(NodeType* subroot, DataAllocator& da, NodeAllocator& na)
         {
-            if (subroot == NULL)
-                return NULL;
-            else if (subroot->compare(data)) // this < data
-                return _search(subroot->right, data);
-            else if (subroot->compare_r(data)) // this > data
-                return _search(subroot->left, data);
-            else // this == data
-                return subroot;
+            if (subroot != NULL)
+            {
+                _cleanup_tree(subroot->right, da, na);
+                _cleanup_tree(subroot->left, da, na);
+                da.destroy(&subroot->data);
+                na.deallocate(subroot, 1);
+            }
+            return NULL;
         }
 
-        // HELPFULL A LOT
-        static void         printBT(const std::string& prefix, const NodeType* node, bool isLeft)
+        static NodeType*    _copy(NodeType* subroot, DataAllocator& da, NodeAllocator& na)
         {
-            if( node != NULL )
+            if (subroot != NULL)
             {
-                std::cout << prefix;
-
-                std::cout << (isLeft ? "├──" : "└──" );
-
-                // print the value of the node
-                std::cout << node->data;
-                std::cout << std::endl;
-
-                // enter the next tree level - left and right branch
-                printBT( prefix + (isLeft ? "│   " : "    "), node->right, true);
-                printBT( prefix + (isLeft ? "│   " : "    "), node->left, false);
+                NodeType* old_subroot = subroot;
+                subroot = na.allocate(1);
+                subroot->left = _copy(old_subroot->left, da, na);
+                subroot->right = _copy(old_subroot->right, da, na);
+                subroot->h = old_subroot->h;
+                da.construct(&subroot->data, old_subroot->data);
             }
+            return subroot;
         }
 
     public:
-        // HELPFUL A LOT
-        void printBT() const
+
+        iterator            begin() const
         {
-            printBT("", _root, false);    
+            iterator    iter(*this);
+            iter.move_to_min();
+            return iter;
         }
 
-        AVLtree() : _root(NULL)
+        iterator            rend() const
         {
+            iterator    iter(begin());
+
+            iter.prev();
+            return iter;
+        }
+
+        iterator            end() const
+        {
+            iterator    iter(*this);
+            iter.move_to_max();
+            iter.next();
+            return iter;
+        }
+
+        iterator            find_node(const T& data) const
+        {
+            iterator iter(*this);
+            while (true)
+            {
+                if (iter._curnode == NULL)
+                    return end();
+                else if (iter._curnode->compare(data))
+                    iter.move_to_right();
+                else if (iter._curnode->compare_r(data))
+                    iter.move_to_left();
+                else
+                    return iter;
+                
+            }
+        }
+
+        ~AVLtree()
+        {
+            _root = _cleanup_tree(_root, _data_alloc, _node_alloc);
+            _delete_node(_end_node);
+            _delete_node(_rend_node);
+        }
+
+        AVLtree()
+        : _root(NULL)
+        , _end_node(_new_node())
+        , _rend_node(_new_node())
+        {
+            _end_node->h = 0;
+            _rend_node->h = 0;
+        }
+
+        AVLtree(const AVLtree& other_tree)
+        : _data_alloc(other_tree._data_alloc)
+        , _node_alloc(other_tree._node_alloc)
+        , _root(_copy(other_tree._root, _data_alloc, _node_alloc))
+        , _end_node(_new_node())
+        , _rend_node(_new_node())
+        {
+            _end_node->h = 0;
+            _rend_node->h = 0;
+        }
+
+        AVLtree& operator=(const AVLtree& other_tree)
+        {
+            if (this != &other_tree)
+            {
+                _root = _cleanup_tree(_root, _data_alloc, _node_alloc);
+                _data_alloc = other_tree._data_alloc;
+                _node_alloc = other_tree._node_alloc;
+                _root = _copy(other_tree._root, _data_alloc, _node_alloc);
+            }
+            return *this;
         }
 
         void insert(const T& data)
@@ -249,14 +419,12 @@ namespace ft
         {
             NodeType* deleted;
             _root = _delete(_root, data, deleted);
-            _node_alloc.destroy(deleted);
-            _node_alloc.deallocate(deleted, 1);
+            if (deleted != NULL) {
+                _node_alloc.destroy(deleted);
+                _node_alloc.deallocate(deleted, 1);
+            }
         }
 
-        bool contains(const T& data)
-        {
-            return _search(_root, data);
-        }
     };
 
 } // namespace ft
