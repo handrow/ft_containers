@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set_iterator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 15:37:13 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/22 06:12:06 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/22 22:02:55 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ namespace ft
     template<typename TreeIter>
     class set_iterator_base : public iterator_base_tag
     {
-        public:
+    public:
         typedef TreeIter                        iter_type;
         typedef typename iter_type::ValueType   value_type;
         typedef value_type&                     reference;

@@ -6,15 +6,15 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/15 14:54:51 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/26 14:40:42 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "bidirectionalIterator.hpp"
-#include <iostream>
 #include "../allocator.hpp"
+
 namespace ft
 {
 
@@ -485,7 +485,7 @@ namespace ft
     template<typename T, typename Alloca>
     void        list<T, Alloca>::reverse()
     {
-        if (_size > 2)
+        if (_size > 1)
         {
             node_type *node = _head;
             while (node->next != _tail)

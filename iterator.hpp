@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   iterator.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/04/25 18:48:32 by handrow           #+#    #+#             */
+/*   Updated: 2021/04/25 18:48:35 by handrow          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include "type_helpers.hpp"
@@ -34,6 +46,7 @@ namespace ft {
         reverse_iterator()                                  : _iter(iter_type()) { }
         reverse_iterator(const this_type& src)              : _iter(src._iter) { }
         reverse_iterator(const iter_type& iter)             : _iter(iter) { }
+
         this_type&  operator=(const this_type& src)         { _iter = src._iter; return *this; }
         this_type&  operator=(const iter_type& iter)        { _iter = iter; return *this; }
 
@@ -43,15 +56,15 @@ namespace ft {
         pointer     operator->() const                      { iter_type tmp = this->_iter; return &(*(--tmp)); }
         reference   operator[](difference_type n) const     { return this->_iter[n]; }
 
-        this_type&  operator++()                { --_iter; return *this; }
-        this_type   operator++(int)             { this_type tmp(*this); ++(*this); return tmp; }
-        this_type&  operator--()                { ++_iter; return *this; }
-        this_type   operator--(int)             { this_type tmp(*this); --(*this); return tmp; }
+        this_type&  operator++()                            { --_iter; return *this; }
+        this_type   operator++(int)                         { this_type tmp(*this); ++(*this); return tmp; }
+        this_type&  operator--()                            { ++_iter; return *this; }
+        this_type   operator--(int)                         { this_type tmp(*this); --(*this); return tmp; }
 
-        this_type    operator+(difference_type n) const     { return this_type(_iter - n); }
-        this_type&   operator+=(difference_type n)          { _iter -= n; return *this; }
-        this_type    operator-(difference_type n) const     { return this_type(_iter + n); }
-        this_type&   operator-=(difference_type n)          { _iter += n; return *this; }
+        this_type   operator+(difference_type n) const      { return this_type(_iter - n); }
+        this_type&  operator+=(difference_type n)           { _iter -= n; return *this; }
+        this_type   operator-(difference_type n) const      { return this_type(_iter + n); }
+        this_type&  operator-=(difference_type n)           { _iter += n; return *this; }
 
         friend bool         operator==(const this_type& _x, const this_type& _y)
         {
@@ -91,7 +104,6 @@ namespace ft {
         {
             return x._iter - y._iter;
         }
-        
     };
 
 }

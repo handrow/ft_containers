@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 04:02:55 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/27 16:56:26 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/23 16:49:28 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ namespace ft
 
         friend bool     operator<=(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
         {
-            return !(y > x);
+            return !(y < x);
         }
 
         friend bool     operator>(const stack<_T, _Container>& x, const stack<_T, _Container>& y)

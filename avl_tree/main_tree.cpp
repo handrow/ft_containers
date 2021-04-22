@@ -2,6 +2,15 @@
 #include <iostream>
 #include <string>
 
+// 1) If there is an imbalance in left child of right subtree, then you perform a left-right rotation.
+
+// 2) If there is an imbalance in left child of left subtree, then you perform a right rotation.
+
+// 3) If there is an imbalance in right child of right subtree, then you perform a left rotation.
+
+// 4) If there is an imbalance in right child of left subtree, then you perform a right-left rotation.
+
+
 // template <typename K, typename V>
 // struct pair_less
 // {

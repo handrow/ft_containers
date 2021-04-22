@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 06:19:03 by handrow           #+#    #+#             */
-/*   Updated: 2021/03/29 20:09:36 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/23 17:19:33 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ namespace ft
         queue&              operator=(const queue& other)   { c = other.c; return *this; }
         
         // ELEMENT ACCESS
-        reference           front()                         { return c.begin(); }
-        const_reference     front() const                   { return c.begin(); }
+        reference           front()                         { return c.front(); }
+        const_reference     front() const                   { return c.front(); }
         reference           back()                          { return c.back(); }
         const_reference     back() const                    { return c.back(); }
         
@@ -48,10 +48,10 @@ namespace ft
 
         // MODIFIERS
         void                push(const_reference value)     { c.push_back(value); }
-        void                pop()                           { c.pop_back(); }
+        void                pop()                           { c.pop_front(); }
 
         // NON-MEMBER FUNCTIONS
-        friend bool         operator==(const stack<_T, _Container>& x, const stack<_T, _Container>& y)
+        friend bool         operator==(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
             return x.c == y.c;
         }
@@ -68,7 +68,7 @@ namespace ft
 
         friend bool         operator<=(const queue<_T, _Container>& x, const queue<_T, _Container>& y)
         {
-            return !(y > x);
+            return !(x > y);
         }
 
         friend bool         operator>(const queue<_T, _Container>& x, const queue<_T, _Container>& y)

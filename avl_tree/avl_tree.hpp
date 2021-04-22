@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   avl_tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/22 04:45:07 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/23 12:41:20 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ namespace ft
         T            data;
         int          h;
 
-        static int get_height(const AVLnode* other)
+        static int  get_height(const AVLnode* other)
         {
             return other != NULL ? other->h : 0;
         }
 
-        int bfactor() const
+        int         bfactor() const
         {
             return get_height(left) - get_height(right);
         }
 
-        void fix_height()
+        void        fix_height()
         {
             h = max(get_height(left), get_height(right)) + 1;
         }
@@ -67,7 +67,7 @@ namespace ft
             {
             }
 
-            bool    is_equal(const iterator& other) const
+            bool                is_equal(const iterator& other) const
             {
                 return _curnode == other._curnode;
             }
@@ -86,7 +86,7 @@ namespace ft
                 return node;
             }
 
-            iterator&    next()
+            iterator&           next()
             {
                 if (_curnode->right)
                     _curnode = __min_elem(_curnode->right);
@@ -103,7 +103,7 @@ namespace ft
                 return *this;
             }
 
-            iterator&    prev()
+            iterator&           prev()
             {
                 if (_curnode->left)
                     _curnode = __max_elem(_curnode->left);
@@ -116,12 +116,12 @@ namespace ft
                 return *this;
             }
         
-            T&      get_data_ref() const
+            ValueType&          get_data_ref() const
             {
                 return _curnode->data;
             }
 
-            const T& get_data_const_ref() const
+            const ValueType&    get_data_const_ref() const
             {
                 return _curnode->data;
             }
@@ -134,7 +134,7 @@ namespace ft
         typedef Allocator                                               DataAllocator;
         typedef typename Allocator::template rebind<NodeType>::other    NodeAllocator;
 
-    private:
+    public: // make private
         Compare             _compare;
         DataAllocator       _data_alloc;
         NodeAllocator       _node_alloc;
@@ -208,7 +208,8 @@ namespace ft
         {
             subroot->fix_height();
             const int sroot_bfactor = subroot->bfactor();
-            if (sroot_bfactor >= 2)
+            // left-right rotation
+            if (sroot_bfactor >= 2) // A node has been inserted into the right subtree of the left subtree. 
             {
                 if (subroot->left->bfactor() <= -1)
                 {
@@ -217,7 +218,8 @@ namespace ft
                 }
                 return _rotate_r(subroot);
             }
-            else if (sroot_bfactor <= -2)
+            // right left rotation
+            else if (sroot_bfactor <= -2) // A node has been inserted into the left subtree of the right subtree.
             {
                 if (subroot->right->bfactor() >= 1)
                 {
@@ -400,7 +402,6 @@ namespace ft
                     iter._curnode = iter._curnode->left;
                 else
                     return iter;
-                
             }
         }
 
@@ -433,6 +434,10 @@ namespace ft
                                                            : after_del);
         }
 
+        Compare  get_compare(void) const
+        {
+            return this->_compare;
+        }
     };
 
 } // namespace ft
