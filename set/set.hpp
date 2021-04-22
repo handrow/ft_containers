@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/19 15:38:12 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/19 17:41:56 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/22 04:45:43 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "../allocator.hpp"
+#include "../iterator.hpp"
+#include "set_iterator.hpp"
 
 namespace ft
 {
@@ -20,59 +22,62 @@ namespace ft
     class set
     {
     public:
-        typedef Key                 key_type;
         typedef Key                 value_type;
         typedef Allocator           allocator_type;
         typedef size_t              size_type;
         typedef ptrdiff_t           difference_type;
-        typedef Compare             key_compare;
+        // typedef Compare             key_compare;
         typedef Compare             value_compare;
         typedef value_type&         reference;
         typedef const value_type&   const_reference;
         typedef value_type*         pointer;
         typedef const value_type*   const_pointer;
-        // typedef AVLtree<key_type, key_compare>  tree_type;
 
-    private:
-        allocator_type  _allocator;
+        typedef AVLtree<value_type, value_compare>      tree_type;
+        typedef typename tree_type::iterator            tree_iter;
+
+        typedef set_iterator<tree_iter>                 iterator;
+        typedef set_const_iterator<tree_iter>           const_iterator;
+        typedef ft::reverse_iterator<iterator>          reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+        typedef typename std::pair<iterator, bool>      insert_result;
+
+    public: // make private then
         tree_type       _tree;
-        pointer         _data;
-        key_compare     _comp;
         size_type       _size;
 
     public:
         // MEMBER FUNCTIONS
-        set() { }
-        set(const Compare& comp, const allocator_type& alloc=allocator_type());
+        set(const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
         set(const set& other);
         //set(iterator first, iterator last, const Compare& comp=Compare(), const allocator_type& alloc=allocator_type() );
         ~set() {}
 
         // ITERATORS
-        // iterator                begin();
-        // iterator                end();
+        iterator                begin()             { return iterator(_tree.begin()); }
+        iterator                end()               { return iterator(_tree.end()); }
 
-        // const_iterator          begin() const;
-        // const_iterator          end() const;
+        const_iterator          begin() const       { return const_iterator(_tree.begin()); }
+        const_iterator          end() const         { return const_iterator(_tree.end()); }
 
-        // reverse_iterator        rbegin();
-        // reverse_iterator        rend();
+        reverse_iterator        rbegin()            { return reverse_iterator(iterator(_tree.end())); }
+        reverse_iterator        rend()              { return reverse_iterator(iterator(_tree.begin())); }
         
-        // const_reverse_iterator  rbegin() const;
-        // const_reverse_iterator  rend() const;
+        const_reverse_iterator  rbegin() const      { return reverse_iterator(const_iterator(_tree.end())); }
+        const_reverse_iterator  rend() const        { return reverse_iterator(const_iterator(_tree.begin())); }
 
         // CAPACITY
         bool                                empty() const       { return !_size; }
         size_type                           size() const        { return _size; }
-        size_type                           max_size() const    { return _allocator.max_size(); }
+        size_type                           max_size() const    { return _tree._node_alloc.max_size(); }
 
         // MODIFIERS
-        // void                                clear();
-        // // pair<iterator,bool>              insert(const value_type& value);
-        // // iterator                         insert(iterator hint, const value_type& value);
-        // // void                             insert(iterator first, iterator last);
-        // void                                erase(iterator pos);
-        // void                                erase(iterator first, iterator last);
+        void                                clear();
+        insert_result                       insert(const value_type& value);
+        // iterator                        insert(iterator hint, const value_type& value);
+        void                                insert(iterator first, iterator last);
+        void                                erase(iterator pos);
+        void                                erase(iterator first, iterator last);
         // size_type                           erase(const key_type& key);
         // void                                swap(set& other);
 
@@ -94,10 +99,55 @@ namespace ft
     };
     
     template<class T, class Comp, class Alloca>
-    set<T, Comp, Alloca>::set(const key_compare& comp, const allocator_type& alloc)
-    : _allocator(alloc), _data(NULL), _comp(comp), _size(0)
+    set<T, Comp, Alloca>::set(const value_compare& comp, const allocator_type& alloc)
+    : _tree(comp, alloc)
+    , _size(0)
     {
     }
 
-    
+    template<class T, class Comp, class Alloca>
+    set<T, Comp, Alloca>::set(const set& other)
+    : _tree(other._tree)
+    , _size(other._size)
+    {
+    }
+
+    template<class T, class Comp, class Alloca>
+    void   set<T, Comp, Alloca>::clear()
+    {
+        _tree._root = tree_type::_cleanup_tree(_tree.root, _tree._data_alloc, _tree._node_alloc);
+        _size = 0;
+    }
+
+    template<class T, class Comp, class Alloca>
+    typename set<T, Comp, Alloca>::insert_result
+    set<T, Comp, Alloca>::insert(const value_type& value)
+    {
+        iterator it(_tree.find_node(value));
+        if (it != end()) // if element already here
+            return insert_result(it, false);
+        ++_size;
+        return insert_result(_tree.insert(value), true);
+    }
+
+    template<class T, class Comp, class Alloca>
+    void   set<T, Comp, Alloca>::insert(iterator first, iterator last)
+    {
+        while (first != last)
+            insert(*first++);
+    }
+
+    template<class T, class Comp, class Alloca>
+    void   set<T, Comp, Alloca>::erase(iterator pos)
+    {
+        _tree.remove(*pos);
+    }
+
+    template<class T, class Comp, class Alloca>
+    void   set<T, Comp, Alloca>::erase(iterator first, iterator last)
+    {
+        while (first != last)
+            _tree.remove(*first++);
+    }
+
 } // namespace ft
