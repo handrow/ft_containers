@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/19 15:38:12 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/22 04:45:43 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/22 06:19:05 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,12 @@ namespace ft
         // MODIFIERS
         void                                clear();
         insert_result                       insert(const value_type& value);
+
         // iterator                        insert(iterator hint, const value_type& value);
-        void                                insert(iterator first, iterator last);
+
+        template<class Iterator> typename enable_if< is_iterator<Iterator>::value , void >
+        ::type                              insert(Iterator first, Iterator last);
+
         void                                erase(iterator pos);
         void                                erase(iterator first, iterator last);
         // size_type                           erase(const key_type& key);
@@ -131,7 +135,9 @@ namespace ft
     }
 
     template<class T, class Comp, class Alloca>
-    void   set<T, Comp, Alloca>::insert(iterator first, iterator last)
+    template<class Iterator>
+    typename enable_if< is_iterator<Iterator>::value , void >::type
+    set<T, Comp, Alloca>::insert(Iterator first, Iterator last)
     {
         while (first != last)
             insert(*first++);

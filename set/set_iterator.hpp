@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 15:37:13 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/22 04:40:24 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/22 06:12:06 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 namespace ft
 {
     template<typename TreeIter>
-    class set_iterator_base
+    class set_iterator_base : public iterator_base_tag
     {
         public:
         typedef TreeIter                        iter_type;
@@ -31,6 +31,7 @@ namespace ft
         iter_type   _iter;
 
     public:
+        set_iterator_base() : _iter(NULL, NULL) {}
         set_iterator_base(const set_iterator_base& other)  : _iter(other._iter) {}
         set_iterator_base(const iter_type& tree_iter) : _iter(tree_iter) {}
 
@@ -58,6 +59,7 @@ namespace ft
         typedef typename base_type::const_pointer   pointer;
         typedef typename base_type::iter_type       iter_type;
 
+        set_iterator() {}
         set_iterator(const this_type& other) : base_type(other) {}
         set_iterator(const iter_type& tree_iter) : base_type(tree_iter) {}
         this_type&   operator=(const this_type& other) { base_type::operator=(other); return *this; }
@@ -83,6 +85,7 @@ namespace ft
         typedef typename base_type::const_pointer   pointer;
         typedef typename base_type::iter_type       iter_type;
 
+        set_const_iterator() {}
         set_const_iterator(const base_type& other) : base_type(other) {}
         set_const_iterator(const iter_type& tree_iter) : base_type(tree_iter) {}
         this_type&   operator=(const base_type& other) { base_type::operator=(other); return *this; }

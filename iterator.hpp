@@ -1,11 +1,16 @@
 #pragma once
 
+#include "type_helpers.hpp"
+
 namespace ft {
 
-    struct iterator_tag {};
+    struct iterator_base_tag {};
+
+    template <typename SomeType, bool is_iter = is_base<iterator_base_tag, SomeType>::result >
+    struct is_iterator : public integral_constant<bool, is_iter> {};
 
     template<typename Iter>
-    class  reverse_iterator
+    class  reverse_iterator : public iterator_base_tag
     {
     public:
         typedef Iter                            iter_type;

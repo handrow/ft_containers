@@ -16,6 +16,7 @@ void print_iterators(iterator a, iterator b) {
 
 int main(void) {
     NameSpace::set<int>    MY_SET;
+    NameSpace::set<int>    MY_SET_2;
 
     MY_SET.insert(100);
     MY_SET.insert(200);
@@ -23,11 +24,15 @@ int main(void) {
     MY_SET.insert(400);
     MY_SET.insert(500);
 
+    MY_SET_2.insert(MY_SET.rbegin(), MY_SET.rend());
+
+    print_iterators(MY_SET.begin(), MY_SET.end());
+    print_iterators(MY_SET_2.begin(), MY_SET_2.end());
+
     // NameSpace::set<int>::iterator i = MY_SET.begin();
     // NameSpace::set<int>::const_iterator ci = i;
     // NameSpace::set<int>::reverse_iterator ri = i;
-    // NameSpace::set<int>::const_reverse_iterator cri = ri;
+    // NameSpace::set<int>::const_reverse_iterator cri = ri; // TODO: fix it
 
-    MY_SET.erase(MY_SET.begin(), --MY_SET.end());
-    print_iterators(MY_SET.begin(), MY_SET.end());
+    // MY_SET.erase(MY_SET.begin(), ----MY_SET.end());
 }
