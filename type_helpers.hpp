@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   type_helpers.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 18:48:25 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/25 18:48:27 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 02:21:37 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,20 @@ namespace ft
         const static bool result = (sizeof(check(Inheritor())) == sizeof(yes));
     };
 
+    template <typename Some>
+    class is_pointer : public false_type {};
+    template <typename Some>
+    class is_pointer<Some*> : public true_type {};
+    
+
     template <bool, typename T>     struct enable_if {};
     template <typename T>           struct enable_if<true, T> { typedef T type; };
+
+    template <class AnyIterator>
+    void print_collection(AnyIterator a, AnyIterator b)
+    {
+        while (a != b) std::cout << *a++ << " ";
+        std::cout << "\n";
+    }
 
 }

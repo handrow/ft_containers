@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/19 15:38:12 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/23 13:21:33 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 01:31:38 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ namespace ft
         // MEMBER FUNCTIONS
         set(const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
         set(const set& other);
-        // set(iterator first, iterator last, const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
+        set(iterator first, iterator last, const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
         ~set() {}
 
         set&                    operator=(const set& other) { _tree.operator=(other); return *this; }
@@ -86,7 +86,7 @@ namespace ft
         void                                erase(iterator pos);
         void                                erase(iterator first, iterator last);
         size_type                           erase(const value_type& key);
-        // void                                swap(set& other);
+        void                                swap(set& other);
 
         // LOOKUP
         size_type                           count(const value_type& key) const;
@@ -119,14 +119,13 @@ namespace ft
     {
     }
 
-    // template<class T, class Comp, class Alloca>
-    // set<T, Comp, Alloca>::set(iterator first, iterator last, const value_compare& comp, const allocator_type& alloc)
-    // : _tree(comp, alloc)
-    // , _size(0)
-    // {
-    //     while (first++ != last)
-    //         insert(first, *first);
-    // }
+    template<class T, class Comp, class Alloca>
+    set<T, Comp, Alloca>::set(iterator first, iterator last, const value_compare& comp, const allocator_type& alloc)
+    : _tree(comp, alloc)
+    , _size(0)
+    {
+        insert(first, last);
+    }
 
     template<class T, class Comp, class Alloca>
     void   set<T, Comp, Alloca>::clear()
@@ -213,6 +212,15 @@ namespace ft
     typename set<T, Comp, Alloca>::const_iterator   set<T, Comp, Alloca>::find(const value_type& key) const
     {
         return const_iterator(find(key));
+    }
+
+    template<class T, class Comp, class Alloca>
+    void    set<T, Comp, Alloca>::swap(set& other)
+    {
+        _tree.swap(other._tree);
+        size_t tmp = _size;
+        _size = other._size;
+        other._size = tmp;
     }
 
 //     template<class T, class Comp, class Alloca>

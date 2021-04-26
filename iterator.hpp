@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   iterator.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 18:48:32 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/25 18:48:35 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 02:45:47 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,21 @@ namespace ft {
 
     struct iterator_base_tag {};
 
-    template <typename SomeType, bool is_iter = is_base<iterator_base_tag, SomeType>::result >
+    template <typename SomeType, bool is_iter = 
+        is_base<iterator_base_tag, SomeType>::result ||
+        is_pointer<SomeType>::value
+    >
     struct is_iterator : public integral_constant<bool, is_iter> {};
+
+    template <typename Iterator>
+    typename enable_if< is_iterator<Iterator>::value, size_t >::type
+    distance(Iterator a, Iterator b)
+    {
+        size_t len = 0;
+        while (a++ != b)
+            ++len;
+        return len;
+    }
 
     template<typename Iter>
     class  reverse_iterator : public iterator_base_tag
@@ -97,12 +110,7 @@ namespace ft {
 
         friend difference_type  operator-(const this_type& x, const this_type& y)
         {
-            return x._iter + y._iter;
-        }
-
-        friend difference_type  operator+(const this_type& x, const this_type& y)
-        {
-            return x._iter - y._iter;
+            return y._iter - x._iter;
         }
     };
 

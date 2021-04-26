@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 17:25:19 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/26 16:48:04 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 01:34:23 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,28 +75,13 @@ namespace ft
         }
     };
 
-    template<class Key, class T, class Compare=ft::less<Key>, class Allocator=ft::allocator<pair<const Key, T> > >
-    class value_compare
+    template<class K, class V>
+    ft::pair<K, V>  make_pair(K key, V value)
     {
-    public:
-        typedef bool    result_type;
-        typedef T       first_argument_type;
-        typedef T       second_argument_type;
+        return ft::pair<K, V>(key, value);
+    }
 
-    private:
-        Compare         comp;
-
-    protected:
-        value_compare(Compare c) : comp(c) {}
-    
-    public:
-        bool    operator()(const T& x, const T& y) const
-        {
-            return comp(x.first_argument_type, y.first_argument_type);
-        }
-    };
-
-    template <class Key, class T, class Compare=less<Key>, class Allocator=ft::allocator<pair<const Key, T> > >
+    template <class Key, class T, class Compare=ft::less< pair<Key, T> >, class Allocator=ft::allocator<pair<const Key, T> > >
     class map
     {
     public:
@@ -106,6 +91,7 @@ namespace ft
         typedef size_t                                  size_type;
         typedef ptrdiff_t                               difference_type;
         typedef Compare                                 key_compare;
+        typedef Compare                                 value_compare;
         typedef Allocator                               allocator_type;
         typedef value_type&                             reference;
         typedef const value_type&                       const_reference;
@@ -129,10 +115,12 @@ namespace ft
 
     public:
         // MEMBER FUNCTIONS
-        map() {} // doesnt work without it
-        map(const key_compare& comp, const allocator_type& alloc=allocator_type());
-        // template<class Iterator>
-        // map(Iterator first, Iterator last, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type());    
+        map(const key_compare& comp=key_compare(), const allocator_type& alloc=allocator_type());
+        template<class Iterator>
+        map(Iterator first, Iterator last, const Compare& comp = Compare(), const allocator_type& alloc = allocator_type())
+        {
+            insert(first, last);
+        }   
         map(const map& other);
         ~map() {}
 
@@ -165,7 +153,7 @@ namespace ft
         void                                erase(iterator pos);
         void                                erase(iterator first, iterator last);
         size_type                           erase(const key_type& key);
-        // void                                swap(map& other);
+        void                                swap(map& other);
 
         // LOOKUP
         size_type                           count(const key_type& key) const;
@@ -178,14 +166,16 @@ namespace ft
         // iterator                            upper_bound(const key_type& key);
         // const_iterator                      upper_bound(const key_type& key);
         
-        // // OBSERVES
-        // key_compare                         key_comp() const;
-        // value_compare                       value_comp() const;
-        value_type  make_pair(key_type key, mapped_type value)
+        // OBSERVES
+        key_compare                         key_comp() const
         {
-            return ft::pair<key_type, mapped_type>(key, value);
+            return _tree.get_compare();
         }
-        
+
+        value_compare                       value_comp() const
+        {
+            return _tree.get_compare();
+        }
     };
 
     template <class K, class T, class C, class A>
@@ -283,5 +273,14 @@ namespace ft
     typename map<K, T, C, A>::const_iterator  map<K, T, C, A>::find(const key_type& key) const
     {
         return const_iterator(find(key));
+    }
+
+    template <class K, class T, class C, class A>
+    void    map<K, T, C, A>::swap(map& other)
+    {
+        _tree.swap(other._tree);
+        size_t tmp = _size;
+        _size = other._size;
+        other._size = tmp;
     }
 } // namespace ft

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   avl_tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/23 12:41:20 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 01:29:37 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ namespace ft
             subroot->fix_height();
             const int sroot_bfactor = subroot->bfactor();
             // left-right rotation
-            if (sroot_bfactor >= 2) // A node has been inserted into the right subtree of the left subtree. 
+            if (sroot_bfactor >= 2)
             {
                 if (subroot->left->bfactor() <= -1)
                 {
@@ -219,7 +219,7 @@ namespace ft
                 return _rotate_r(subroot);
             }
             // right left rotation
-            else if (sroot_bfactor <= -2) // A node has been inserted into the left subtree of the right subtree.
+            else if (sroot_bfactor <= -2)
             {
                 if (subroot->right->bfactor() >= 1)
                 {
@@ -437,6 +437,13 @@ namespace ft
         Compare  get_compare(void) const
         {
             return this->_compare;
+        }
+
+        void    swap(AVLtree& other)
+        {
+            NodeType*   tmp = this->_root;
+            this->_root = other._root;
+            other._root = tmp;
         }
     };
 

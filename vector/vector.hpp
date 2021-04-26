@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/17 12:30:10 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 02:28:00 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 #include <exception>
 #include "randomAccessIterator.hpp"
- #include "../allocator.hpp"
+#include "../allocator.hpp"
+
 
 namespace ft
 {
@@ -31,10 +32,11 @@ namespace ft
         typedef value_type*                         pointer;
         typedef const value_type*                   const_pointer;
         typedef ptrdiff_t                           difference_type;
-        typedef iterator<const value_type>          const_iterator;
-        typedef iterator<value_type>                iterator;
-        typedef reverse_iterator<const_iterator>    const_reverse_iterator;
-        typedef reverse_iterator<iterator>          reverse_iterator;
+
+        typedef vector_iterator<const value_type>       const_iterator;
+        typedef vector_iterator<value_type>             iterator;
+        typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+        typedef ft::reverse_iterator<iterator>          reverse_iterator;
         // need to check last insert capacity and operator<
     private:
         allocator_type                              allocator;
@@ -61,13 +63,19 @@ namespace ft
 
         vector(const allocator_type& alloc=allocator_type());
         vector(size_type n, const_reference val=value_type(), const allocator_type& alloc=allocator_type());
-        vector(iterator first, iterator last, const allocator_type& alloc=allocator_type());
+
+        template <typename Iterator>
+        vector(Iterator first, Iterator last, const allocator_type& alloc=allocator_type());
+
         vector(const vector& src);
         ~vector();
 
         vector&                 operator=(const vector& src);
         void                    assign(size_type num, const_reference val);
-        void                    assign(iterator first, iterator last );
+
+        template <typename Iterator>
+        typename ft::enable_if<ft::is_iterator<Iterator>::value, void>::type
+        assign(Iterator first, Iterator last);
 
         // ITERATORS
 
@@ -117,60 +125,78 @@ namespace ft
 
         //NON-MEMBER FUNCTIONS
         template<typename T, typename Alloca>
-        friend bool    operator==(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
- 			if (x.length != y.length)
-				return false;
-			for (size_type i = 0; i < x.size(); i++)
-			{
-                if (x[i] != y[i])
-					return false;
-            }
-			return true;
-        }
+        friend bool    operator==(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
 
         template<typename T, typename Alloca>
-        friend bool    operator!=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
-            return !(x == y);
-        }
+        friend bool    operator!=(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
 
         template<typename T, typename Alloca>
-        friend bool    operator<(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
-            typename vector<T, Alloca>::const_iterator f1 = x.begin();
-	        typename vector<T, Alloca>::const_iterator l1 = x.end();
-	        typename vector<T, Alloca>::const_iterator f2 = y.begin();
-	        typename vector<T, Alloca>::const_iterator l2 = y.end();
-
-            for (; f1 != l1; f1++, f2++)
-            {
-                if (f2 == l2 || *f1 > *f2)
-                    return false;
-                else if (*f1 < *f2)
-                    return true;
-            }
-            return (f2 != l2);
-        }
+        friend bool    operator<(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
 
         template<typename T, typename Alloca>
-        friend bool    operator<=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
-            return !(x > y);
-        }
+        friend bool    operator<=(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
 
         template<typename T, typename Alloca>
-        friend bool    operator>(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
-            return y < x;
-        }
+        friend bool    operator>(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
 
         template<typename T, typename Alloca>
-        friend bool    operator>=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
-        {
-            return !(x < y);
-        }
+        friend bool    operator>=(const vector<T, Alloca>& x, const vector<T, Alloca>& y);
     };
+
+    template<typename T, typename Alloca>
+    bool    operator==(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        if (x.length != y.length)
+            return false;
+        for (size_t i = 0; i < x.size(); i++)
+        {
+            if (x[i] != y[i])
+                return false;
+        }
+        return true;
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator!=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        return !(x == y);
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator<(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        typename vector<T, Alloca>::const_iterator f1 = x.begin();
+        typename vector<T, Alloca>::const_iterator l1 = x.end();
+        typename vector<T, Alloca>::const_iterator f2 = y.begin();
+        typename vector<T, Alloca>::const_iterator l2 = y.end();
+
+        for (; f1 != l1; f1++, f2++)
+        {
+            if (f2 == l2 || *f1 > *f2)
+                return false;
+            else if (*f1 < *f2)
+                return true;
+        }
+        return (f2 != l2);
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator<=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        return !(x > y);
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator>(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        return y < x;
+    }
+
+    template<typename T, typename Alloca>
+    bool    operator>=(const vector<T, Alloca>& x, const vector<T, Alloca>& y)
+    {
+        return !(x < y);
+    }
 
     template<typename T, typename Alloca>
     vector<T, Alloca>::vector(const allocator_type& alloc)
@@ -197,7 +223,8 @@ namespace ft
     }
     
     template<typename T, typename Alloca>
-    vector<T, Alloca>::vector(iterator first, iterator last, const allocator_type& alloc)
+    template<typename Iterator>
+    vector<T, Alloca>::vector(Iterator first, Iterator last, const allocator_type& alloc)
     : allocator(alloc), data(allocator.allocate(last - first)), length(last - first), cap(last - first)
     {
         assign(first, last);
@@ -232,10 +259,12 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    void    vector<T, Alloca>::assign(iterator first, iterator last)
+    template<typename Iterator>
+    typename ft::enable_if<ft::is_iterator<Iterator>::value, void>::type
+    vector<T, Alloca>::assign(Iterator first, Iterator last)
     {
         clear();
-        size_type   newSize = last - first;
+        size_type   newSize = distance(first, last);
         if (newSize > max_size())
             throw std::length_error("vector");
         while (first != last)

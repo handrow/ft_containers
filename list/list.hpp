@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/26 14:40:42 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 01:48:44 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ namespace ft
 
         typedef list_iterator<value_type>           iterator;
         typedef list_iterator<const value_type>     const_iterator;
-        typedef list_rev_iterator<iterator>         reverse_iterator;
-        typedef list_rev_iterator<const_iterator>   const_rev_iterator;
+        typedef ft::reverse_iterator<iterator>         reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>   const_reverse_iterator;
 
     private:
         allocator_type          _allocator;
@@ -105,13 +105,16 @@ namespace ft
         list(const allocator_type& alloc=allocator_type());
         list(const list& other);
         list(size_type count, const_reference value = value_type(), const allocator_type& alloc = allocator_type());
-        list(iterator first, iterator last, const allocator_type& alloc = allocator_type());
+
+        template <typename Iterator>
+        list(Iterator first, Iterator last, const allocator_type& alloc = allocator_type());
         ~list();
 
         list&               operator=(const list& other);
         void                assign(size_type count, const_reference value);
-        template< typename Tp, template <typename> class InputIt >
-        void                assign(InputIt<Tp> first, InputIt<Tp> last);
+        template< typename Iterator >
+        typename ft::enable_if< ft::is_iterator<Iterator>::value, void >::type
+        assign(Iterator first, Iterator last);
         
         // ELEMENT ACCESS
         reference           front()             { return _head->data; }
@@ -129,8 +132,8 @@ namespace ft
         reverse_iterator    rbegin()            { return reverse_iterator(end()); }
         reverse_iterator    rend()              { return reverse_iterator(begin()); }
 
-        const_rev_iterator  rbegin() const      { return const_rev_iterator(!_size ? _tail : _tail->prev); }
-        const_rev_iterator  rend() const        { return _tail; }
+        const_reverse_iterator  rbegin() const      { return reverse_iterator(end()); }
+        const_reverse_iterator  rend() const        { return reverse_iterator(begin()); }
 
         // CAPACITY
         bool                empty() const       { return !_size; }
@@ -194,7 +197,8 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    list<T, Alloca>::list(iterator first, iterator last, const allocator_type& alloc)
+    template<typename Iterator>
+    list<T, Alloca>::list(Iterator first, Iterator last, const allocator_type& alloc)
     : _allocator(alloc), _head(createNewNode()), _tail(_head), _size(0)
     {
         while (first != last)
@@ -225,8 +229,9 @@ namespace ft
     }
 
     template<typename T, typename Alloca>
-    template< typename Tp, template <typename> class InputIt >
-    void        list<T, Alloca>::assign(InputIt<Tp> first, InputIt<Tp> last)
+    template<typename Iterator>
+    typename ft::enable_if< ft::is_iterator<Iterator>::value, void >::type
+    list<T, Alloca>::assign(Iterator first, Iterator last)
     {
         clear();
         while (first != last)

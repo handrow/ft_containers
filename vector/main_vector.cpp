@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_vector.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 06:02:03 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/17 12:28:16 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 02:46:18 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -686,6 +686,6 @@ int main()
     // test_std_base();
     // test_ft_swap();
     // test_std_swap();
-    test_ft_operators();
-    test_std_operators();
+    // test_ft_operators();
+    // test_std_operators();
 }
