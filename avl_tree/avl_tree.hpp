@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   avl_tree.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 15:57:14 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/28 03:02:29 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,7 @@ namespace ft
         {
             subroot->fix_height();
             const int sroot_bfactor = subroot->bfactor();
-            // left-right rotation
+
             if (sroot_bfactor >= 2)
             {
                 if (subroot->left->bfactor() <= -1)
@@ -218,7 +218,7 @@ namespace ft
                 }
                 return _rotate_r(subroot);
             }
-            // right left rotation
+
             else if (sroot_bfactor <= -2)
             {
                 if (subroot->right->bfactor() >= 1)

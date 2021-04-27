@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
+/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 17:25:19 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 19:43:41 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/28 01:21:13 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ namespace ft
     template <class K, class T, class C, class A>
     void    map<K, T, C, A>::clear()
     {
-        _tree._root = tree_type::_cleanup_tree(_tree._root, _tree._data_alloc, _tree._node_alloc);
+        _tree.clear();
         _size = 0;
     }
 
@@ -365,7 +365,8 @@ namespace ft
     template <class K, class T, class C, class A>
     size_t   map<K, T, C, A>::count(const key_type& key) const
     {
-        iterator it(_tree.find_node(key));
+        value_type tmp(key, mapped_type());
+        iterator it(_tree.find_node(tmp));
         if (it != end())
             return 1;
         return 0;
@@ -374,7 +375,8 @@ namespace ft
     template <class K, class T, class C, class A>
     typename map<K, T, C, A>::iterator  map<K, T, C, A>::find(const key_type& key)
     {
-        return _tree.find_node(key);
+        value_type tmp(key, mapped_type());
+        return _tree.find_node(tmp);
     }
 
     template <class K, class T, class C, class A>

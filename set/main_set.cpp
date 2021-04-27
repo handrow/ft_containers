@@ -267,6 +267,130 @@ void test_std_erase()
     std::cout << std::endl;
 }
 
+void test_ft_swap()
+{
+    std::cout << "* FT SWAP *" << std::endl;
+    ft::set<int> s;
+    s.insert(1);
+    s.insert(2);
+    s.insert(3);
+    std::cout << "s contains:" << " ";
+    print_iterators(s.begin(), s.end());
+
+    ft::set<int> s1;
+    s1.insert(10);
+    s1.insert(8);
+    s1.insert(9);
+    std::cout << "s1 contains:" << " ";
+    print_iterators(s1.begin(), s1.end());
+
+    s.swap(s1);
+    std::cout << "after swap:" << std::endl;
+    std::cout << "s contains:" << " ";
+    print_iterators(s.begin(), s.end());
+    std::cout << "s1 contains:" << " ";
+    print_iterators(s1.begin(), s1.end());
+    std::cout << std::endl;
+}
+
+void test_std_swap()
+{
+    std::cout << "* STD SWAP *" << std::endl;
+    std::set<int> s;
+    s.insert(1);
+    s.insert(2);
+    s.insert(3);
+    std::cout << "s contains:" << " ";
+    print_iterators(s.begin(), s.end());
+
+    std::set<int> s1;
+    s1.insert(10);
+    s1.insert(8);
+    s1.insert(9);
+    std::cout << "s1 contains:" << " ";
+    print_iterators(s1.begin(), s1.end());
+
+    s.swap(s1);
+    std::cout << "after swap:" << std::endl;
+    std::cout << "s contains:" << " ";
+    print_iterators(s.begin(), s.end());
+    std::cout << "s1 contains:" << " ";
+    print_iterators(s1.begin(), s1.end());
+    std::cout << std::endl;
+}
+
+void test_ft_count()
+{
+    std::cout << "* FT COUNT *" << std::endl;
+    ft::set<int> s;
+    s.insert(100);
+    s.insert(150);
+    s.insert(200);
+    if (s.count(200))
+        std::cout << "The key 200 is present" << std::endl;
+    else
+        std::cout << "The key 200 is not present" << std::endl;
+
+    if (s.count(500))
+        std::cout << "The key 500 is present" << std::endl;
+    else
+        std::cout << "The key 500 is not present" << std::endl;
+}
+
+void test_std_count()
+{
+    std::cout << "* STD COUNT *" << std::endl;
+    std::set<int> s;
+    s.insert(100);
+    s.insert(150);
+    s.insert(200);
+    if (s.count(200))
+        std::cout << "The key 200 is present" << std::endl;
+    else
+        std::cout << "The key 200 is not present" << std::endl;
+
+    if (s.count(500))
+        std::cout << "The key 500 is present" << std::endl;
+    else
+        std::cout << "The key 500 is not present" << std::endl;
+}
+
+void test_ft_find()
+{
+    ft::set<int> s;
+    s.insert(100);
+    s.insert(200);
+    s.insert(300);
+
+    if (s.find(300) == s.end())
+        std::cout << "300 is Not found" << std::endl;
+    else
+        std::cout << "300 is Found" << std::endl;
+
+    if (s.find(1000) != s.end())
+        std::cout << "1000 is Found" << std::endl;
+    else
+        std::cout << "1000 is Not found" << std::endl;
+}
+
+void test_std_find()
+{
+    std::set<int> s;
+    s.insert(100);
+    s.insert(200);
+    s.insert(300);
+
+    if (s.find(300) == s.end())
+        std::cout << "300 is Not found" << std::endl;
+    else
+        std::cout << "300 is Found" << std::endl;
+
+    if (s.find(1000) != s.end())
+        std::cout << "1000 is Found" << std::endl;
+    else
+        std::cout << "1000 is Not found" << std::endl;
+}
+
 void test_ft_lower_upper_bound()
 {
     ft::set<int>    mySet;
@@ -295,6 +419,148 @@ void test_std_lower_upper_bound()
     std::cout << "upper_bound: "<< *mySet.upper_bound(200) << std::endl;
 }
 
+void test_ft_equal_range()
+{
+    ft::set<int> myset;
+
+    for (int i = 1; i <= 5; i++) 
+        myset.insert(i*10);
+
+    std::pair<ft::set<int>::const_iterator, ft::set<int>::const_iterator> ret;
+    ret = myset.equal_range(30);
+
+    std::cout << "the lower bound points to: " << *ret.first << std::endl;
+    std::cout << "the upper bound points to: " << *ret.second << std::endl;
+}
+
+void test_std_equal_range()
+{
+    std::set<int> myset;
+
+    for (int i = 1; i <= 5; i++) 
+        myset.insert(i*10);
+
+    std::pair<std::set<int>::const_iterator,std::set<int>::const_iterator> ret;
+    ret = myset.equal_range(30);
+
+    std::cout << "the lower bound points to: " << *ret.first << std::endl;
+    std::cout << "the upper bound points to: " << *ret.second << std::endl;
+}
+
+void test_ft_operators()
+{
+    std::cout << "* FT OPERATORS *" << std::endl;
+    ft::set<int> alice;
+    alice.insert(1);
+    alice.insert(2);
+    alice.insert(3);
+
+    ft::set<int> bob;
+    for (int i = 7; i < 10; ++i)
+        bob.insert(i);
+
+    ft::set<int> eve;
+    eve.insert(1);
+    eve.insert(2);
+    eve.insert(3);
+ 
+    // Compare non equal containers
+    std::cout << "alice == bob returns " << (alice == bob) << std::endl;
+    std::cout << "alice != bob returns " << (alice != bob) << std::endl;
+    std::cout << "alice <  bob returns " << (alice < bob) << std::endl;
+    std::cout << "alice <= bob returns " << (alice <= bob) << std::endl;
+    std::cout << "alice >  bob returns " << (alice > bob) << std::endl;
+    std::cout << "alice >= bob returns " << (alice >= bob) << std::endl;
+ 
+    std::cout << std::endl;
+ 
+    // Compare equal containers
+    std::cout << "alice == eve returns " << (alice == eve) << std::endl;
+    std::cout << "alice != eve returns " << (alice != eve) << std::endl;
+    std::cout << "alice <  eve returns " << (alice < eve) << std::endl;
+    std::cout << "alice <= eve returns " << (alice <= eve) << std::endl;
+    std::cout << "alice >  eve returns " << (alice > eve) << std::endl;
+    std::cout << "alice >= eve returns " << (alice >= eve) << std::endl;
+}
+
+void test_std_operators()
+{
+    std::cout << "* STD OPERATORS *" << std::endl;
+    std::set<int> alice;
+    alice.insert(1);
+    alice.insert(2);
+    alice.insert(3);
+
+    std::set<int> bob;
+    for (int i = 7; i < 10; ++i)
+        bob.insert(i);
+
+    std::set<int> eve;
+    eve.insert(1);
+    eve.insert(2);
+    eve.insert(3);
+ 
+    // Compare non equal containers
+    std::cout << "alice == bob returns " << (alice == bob) << std::endl;
+    std::cout << "alice != bob returns " << (alice != bob) << std::endl;
+    std::cout << "alice <  bob returns " << (alice < bob) << std::endl;
+    std::cout << "alice <= bob returns " << (alice <= bob) << std::endl;
+    std::cout << "alice >  bob returns " << (alice > bob) << std::endl;
+    std::cout << "alice >= bob returns " << (alice >= bob) << std::endl;
+ 
+    std::cout << std::endl;
+ 
+    // Compare equal containers
+    std::cout << "alice == eve returns " << (alice == eve) << std::endl;
+    std::cout << "alice != eve returns " << (alice != eve) << std::endl;
+    std::cout << "alice <  eve returns " << (alice < eve) << std::endl;
+    std::cout << "alice <= eve returns " << (alice <= eve) << std::endl;
+    std::cout << "alice >  eve returns " << (alice > eve) << std::endl;
+    std::cout << "alice >= eve returns " << (alice >= eve) << std::endl;
+}
+
+void test_ft_key_comp()
+{
+    std::cout << "* FT KEY_COMP *" << std::endl;
+    ft::set<int> myset;
+    int highest;
+
+    ft::set<int>::value_compare mycomp = myset.key_comp();
+
+    for (int i=0; i<=5; i++) myset.insert(i);
+
+    std::cout << "myset contains:";
+
+    highest=*myset.rbegin();
+    ft::set<int>::iterator it=myset.begin();
+    do
+        std::cout << ' ' << *it;
+    while ( mycomp(*(++it),highest));
+
+    std::cout << std::endl;
+}
+
+void test_std_key_comp()
+{
+    std::cout << "* STD KEY_COMP *" << std::endl;
+    std::set<int> myset;
+    int highest;
+
+    std::set<int>::value_compare mycomp = myset.key_comp();
+
+    for (int i=0; i<=5; i++) myset.insert(i);
+
+    std::cout << "myset contains:";
+
+    highest=*myset.rbegin();
+    std::set<int>::iterator it=myset.begin();
+    do
+        std::cout << ' ' << *it;
+    while ( mycomp(*(++it),highest));
+
+    std::cout << std::endl;
+}
+
 int main(void)
 {
     test_ft_constructor();
@@ -307,6 +573,18 @@ int main(void)
     test_std_insert();
     test_ft_erase();
     test_std_erase();
+    test_ft_swap();
+    test_std_swap();
+    test_ft_count();
+    test_std_count();
+    test_ft_find();
+    test_std_find();
     test_ft_lower_upper_bound();
     test_std_lower_upper_bound();
+    test_ft_equal_range();
+    test_std_equal_range();
+    test_ft_operators();
+    test_std_operators();
+    test_ft_key_comp();
+    test_std_key_comp();
 }

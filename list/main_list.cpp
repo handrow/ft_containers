@@ -699,5 +699,4 @@ int main()
     test_ft_operators();
     test_std_operators();
 
-    // NEEED STD::SWAP TESTS, ITERATORS TEST AND BASE
 }
