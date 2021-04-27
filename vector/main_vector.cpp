@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/15 06:02:03 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 02:46:18 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 20:35:32 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void test_std_constructor()
 
 void test_ft_sizes()
 {
-    ft::vector<int> v(15, 8);
+    ft::vector<int> v(15, 100);
     std::cout << "empty(): " << v.empty() << std::endl;
     std::cout << "size(): " << v.size() << std::endl;
     std::cout << "max_size(): " << v.max_size() << std::endl;
@@ -122,7 +122,7 @@ void test_ft_sizes()
 
 void test_std_sizes()
 {
-    std::vector<int> v(15, 8);
+    std::vector<int> v(15, 100);
     std::cout << "empty(): " << v.empty() << std::endl;
     std::cout << "size(): " << v.size() << std::endl;
     std::cout << "max_size(): " << v.max_size() << std::endl;
@@ -225,7 +225,8 @@ void test_ft_at()
 	for (unsigned i = 0; i < v.size(); i++)
 	    v.at(i) = i;
     print(v);
-    v.at(11); // out of range
+    try { v.at(11); } // out of range
+    catch (std::exception& ex) { std::cout << ex.what() << std::endl; }
 }
 
 void test_std_at()
@@ -234,7 +235,8 @@ void test_std_at()
 	for (unsigned i = 0; i < v.size(); i++)
 	    v.at(i) = i;
     print(v);
-    v.at(11); // out of range
+    try { v.at(11); } // out of range
+    catch (std::exception& ex) { std::cout << ex.what() << std::endl; }
 }
 
 void test_ft_assignment_operator()
@@ -654,38 +656,38 @@ void test_std_base()
 
 int main()
 {
-    // test_ft_constructor();
-    // test_std_constructor();
-    // test_ft_sizes();
-    // test_std_sizes();
-    // test_ft_resize();
-    // test_std_resize();
-    // test_ft_reserve();
-    // test_std_reserve();
-    // test_ft_index_operator();
-    // test_std_index_operator();
-    // test_ft_at();
-    // test_std_at();
-    // test_ft_assignment_operator();
-    // test_std_assignment_operator();
-    // test_ft_front_back();
-    // test_std_front_back();
-    // test_ft_assign();
-    // test_std_assign();
-    // test_ft_push_pop();
-    // test_std_push_pop();
-    // test_ft_insert();
-    // test_std_insert();
-    // test_ft_erase();
-    // test_std_erase();
-    // test_ft_clear();
-    // test_std_clear();
-    // test_ft_rev_iter();
-    // test_std_rev_iter();
-    // test_ft_base();
-    // test_std_base();
-    // test_ft_swap();
-    // test_std_swap();
-    // test_ft_operators();
-    // test_std_operators();
+    test_ft_constructor();
+    test_std_constructor();
+    test_ft_sizes();
+    test_std_sizes();
+    test_ft_resize();
+    test_std_resize();
+    test_ft_reserve();
+    test_std_reserve();
+    test_ft_index_operator();
+    test_std_index_operator();
+    test_ft_at();
+    test_std_at();
+    test_ft_assignment_operator();
+    test_std_assignment_operator();
+    test_ft_front_back();
+    test_std_front_back();
+    test_ft_assign();
+    test_std_assign();
+    test_ft_push_pop();
+    test_std_push_pop();
+    test_ft_insert();
+    test_std_insert();
+    test_ft_erase();
+    test_std_erase();
+    test_ft_clear();
+    test_std_clear();
+    test_ft_rev_iter();
+    test_std_rev_iter();
+    test_ft_base();
+    test_std_base();
+    test_ft_swap();
+    test_std_swap();
+    test_ft_operators();
+    test_std_operators();
 }

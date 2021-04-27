@@ -6,15 +6,16 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 17:06:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 02:28:00 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 20:30:02 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <exception>
-#include "randomAccessIterator.hpp"
+#include "vector_iterator.hpp"
 #include "../allocator.hpp"
+#include "../algorithm.hpp"
 
 
 namespace ft
@@ -55,7 +56,7 @@ namespace ft
                 throw std::length_error("length error");
             if (_cap >= ms / 2)
                 return ms;
-            return std::max(2 * _cap, new_size);
+            return ft::max(2 * _cap, new_size);
         }
 
     public:
@@ -225,7 +226,7 @@ namespace ft
     template<typename T, typename Alloca>
     template<typename Iterator>
     vector<T, Alloca>::vector(Iterator first, Iterator last, const allocator_type& alloc)
-    : allocator(alloc), data(allocator.allocate(last - first)), length(last - first), cap(last - first)
+    : allocator(alloc), data(NULL), length(0), cap(0)
     {
         assign(first, last);
     }

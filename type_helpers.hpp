@@ -6,16 +6,18 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 18:48:25 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 02:21:37 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 21:33:39 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include <iostream>
+
 namespace ft
 {
 
-    // integral constant type for a meta-magic
+    // some struct that has static _T _val inside 
     template <typename _T, _T _val>
     struct integral_constant { const static _T value = _val; };
 

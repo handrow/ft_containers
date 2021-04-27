@@ -9,20 +9,32 @@ void print_iterators(iterator a, iterator b) {
     std::cout << std::endl;
 }
 
+template<class _Map>
+void print_map(_Map& m)
+{
+    typename _Map::iterator it = m.begin();
+    typename _Map::iterator end = m.end();
+    while (it != end)
+    {
+        std::cout << "{" << it->first << "=" << it->second << "} ";
+        it++;
+    }
+    std::cout << std::endl;
+}
+
+void test_ft_constructor()
+{
+    ft::map<std::string, int> def;
+    def.insert(ft::pair<std::string, int>("a", 1));
+    def.insert(ft::pair<std::string, int>("b", 2));
+    def.insert(ft::pair<std::string, int>("c", 3));
+    def.insert(ft::pair<std::string, int>("d", 4));
+    def.insert(ft::pair<std::string, int>("e", 5));
+    def.insert(ft::pair<std::string, int>("b", 10));
+    print_map(def);
+}
+
 int main()
 {
-    ft::map<int, int> mapa;
-    std::cout <<"FT: " <<  mapa.max_size();
-
-    mapa.insert(ft::pair<int, int>(1, 2));
-    mapa.insert(ft::pair<int, int>(2, 3));
-    mapa.insert(ft::pair<int, int>(3, 4));
-    mapa.insert(ft::pair<int, int>(4, 5));
-    mapa.insert(ft::pair<int, int>(5, 6));
-    std::cout << std::endl;
-
-    std::map<int, int>  mapp;
-    std::cout << "STD: " << mapp.max_size();
-
-    
+    test_ft_constructor();
 }

@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:30 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 01:29:37 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 15:57:14 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,6 +386,11 @@ namespace ft
         iterator end() const
         {
             return iterator(_end_node, _end_node);
+        }
+
+        void    clear()
+        {
+            _root = _cleanup_tree(_root, _data_alloc, _node_alloc);
         }
 
         iterator find_node(const T& data) const

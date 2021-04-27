@@ -6,14 +6,15 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 16:04:38 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 01:48:44 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 20:16:30 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "bidirectionalIterator.hpp"
+#include "list_iterator.hpp"
 #include "../allocator.hpp"
+#include "../algorithm.hpp"
 
 namespace ft
 {
@@ -201,8 +202,7 @@ namespace ft
     list<T, Alloca>::list(Iterator first, Iterator last, const allocator_type& alloc)
     : _allocator(alloc), _head(createNewNode()), _tail(_head), _size(0)
     {
-        while (first != last)
-            push_back(*first++);
+        assign(first, last);
     }
 
     template<typename T, typename Alloca>
@@ -495,13 +495,13 @@ namespace ft
             node_type *node = _head;
             while (node->next != _tail)
             {
-                std::swap(node->next, node->prev);
+                ft::swap(node->next, node->prev);
                 node = node->prev;
             }
             // node on the last elem, which now is the new head
             _head->next = _tail;
             _tail->prev = _head;
-            std::swap(node->next, node->prev);
+            ft::swap(node->next, node->prev);
             _head = node;
             _head->prev = NULL;
         }

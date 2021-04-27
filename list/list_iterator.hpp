@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bidirectionalIterator.hpp                          :+:      :+:    :+:   */
+/*   list_iterator.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/03 20:36:14 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 01:38:42 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 20:18:09 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,41 +76,4 @@ namespace ft
         }
     };
 
-    // template<typename Iter>
-    // class  list_rev_iterator
-    // {
-    // public:
-    //     typedef typename Iter::value_type  value_type;
-    //     typedef typename Iter::pointer     pointer;
-    //     typedef typename Iter::reference   reference;
-
-    // private:
-    //     Iter        _iter;
-
-    // public:
-
-    //     list_rev_iterator()                             : _iter(NULL) { }
-    //     list_rev_iterator(const list_rev_iterator& src) : _iter(src._iter) { }
-    //     list_rev_iterator(Iter other)                   : _iter(other) { }
-    //     ~list_rev_iterator() { }
-
-    //     Iter                base() const                            { return _iter; }
-    //     list_rev_iterator&  operator=(const list_rev_iterator& src) { _iter = src._iter; return *this; }
-    //     reference           operator*() const                       { return *_iter; }
-    //     pointer             operator->() const                      { return &(*_iter); }
-    //     list_rev_iterator&  operator++()                            { --_iter; return *this; }
-    //     list_rev_iterator   operator++(int)                         {list_rev_iterator tmp(*this); --(*this); return tmp; }
-    //     list_rev_iterator&  operator--()                            { ++_iter; return *this; }
-    //     list_rev_iterator   operator--(int)                         {list_rev_iterator tmp(*this); ++(*this); return tmp; }
-
-    //     friend bool         operator==(const list_rev_iterator& _x, const list_rev_iterator& _y)
-    //     {
-    //         return _x._iter == _y._iter;
-    //     }
-    //     friend bool         operator!=(const list_rev_iterator& _x, const list_rev_iterator& _y)
-    //     {
-    //         return _x._iter != _y._iter;
-    //     }
-        
-    // };
 } // namespace ft

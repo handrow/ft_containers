@@ -1,4 +1,5 @@
 #include <stack>
+#include <iostream>
 #include "stack.hpp"
 
 template <class _Stack>
@@ -172,12 +173,12 @@ void test_std_operators()
 
 int main()
 {
-    // test_ft_constructor();
-    // test_std_constructor();
-    // test_ft_top_empty_size();
-    // test_std_top_empty_size();
-    // test_ft_push_pop();
-    // test_std_push_pop();
-    // test_ft_operators();
-    // test_std_operators();
+    test_ft_constructor();
+    test_std_constructor();
+    test_ft_top_empty_size();
+    test_std_top_empty_size();
+    test_ft_push_pop();
+    test_std_push_pop();
+    test_ft_operators();
+    test_std_operators();
 }

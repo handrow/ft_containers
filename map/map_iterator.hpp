@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_iterator.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: handrow <handrow@student.42.fr>            +#+  +:+       +#+        */
+/*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/12 16:11:42 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/22 23:02:42 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 18:31:27 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ namespace ft
         typedef map_iterator                        this_type;
 
         typedef typename base_type::value_type      value_type;
-        typedef typename base_type::const_reference reference;
-        typedef typename base_type::const_pointer   pointer;
+        typedef typename base_type::reference       reference;
+        typedef typename base_type::pointer         pointer;
         typedef typename base_type::iter_type       iter_type;
 
         map_iterator() {}

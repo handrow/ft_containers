@@ -660,45 +660,44 @@ void test_std_operators()
 
 int main()
 {
-    // test_ft_splice();
-    // test_std_splice();
-    // test_ft_sizes();
-    // test_std_sizes();
-    // test_ft_clear();
-    // test_std_clear();
-    // test_ft_constructors();
-    // test_std_constructors();
-    // test_ft_assignment_operator();
-    // test_std_assignment_operator();
-    // test_ft_assign();
-    // test_std_assign();
-    // test_ft_front_back();
-    // test_std_front_back();
-    // test_ft_insert();
-    // test_std_insert();
-    // test_ft_erase();
-    // test_std_erase();
-    // test_ft_push_pop_back();
-    // test_std_push_pop_back();
-    // test_ft_push_pop_front();
-    // test_std_push_pop_front();
-    // test_ft_resize();
-    // test_std_resize();
-    // test_ft_merge();
-    // test_std_merge();
-    // test_ft_remove();
-    // test_std_remove();
-    // test_ft_reverse();
-    // test_std_reverse();
-    // test_ft_swap();
-    // test_std_swap();
-    // test_ft_unique();
-    // test_std_unique();
-    // test_ft_sort();
-    // test_std_sort();
-    // test_ft_operators();
-    // test_std_operators();
-
+    test_ft_splice();
+    test_std_splice();
+    test_ft_sizes();
+    test_std_sizes();
+    test_ft_clear();
+    test_std_clear();
+    test_ft_constructors();
+    test_std_constructors();
+    test_ft_assignment_operator();
+    test_std_assignment_operator();
+    test_ft_assign();
+    test_std_assign();
+    test_ft_front_back();
+    test_std_front_back();
+    test_ft_insert();
+    test_std_insert();
+    test_ft_erase();
+    test_std_erase();
+    test_ft_push_pop_back();
+    test_std_push_pop_back();
+    test_ft_push_pop_front();
+    test_std_push_pop_front();
+    test_ft_resize();
+    test_std_resize();
+    test_ft_merge();
+    test_std_merge();
+    test_ft_remove();
+    test_std_remove();
+    test_ft_reverse();
+    test_std_reverse();
+    test_ft_swap();
+    test_std_swap();
+    test_ft_unique();
+    test_std_unique();
+    test_ft_sort();
+    test_std_sort();
+    test_ft_operators();
+    test_std_operators();
 
     // NEEED STD::SWAP TESTS, ITERATORS TEST AND BASE
 }

@@ -1,4 +1,5 @@
 #include <queue>
+#include <iostream>
 #include "queue.hpp"
 
 template <class _Queue>
@@ -175,12 +176,12 @@ void test_std_operators()
 
 int main()
 {
-    // test_ft_constructor();
-    // test_std_constructor();
-    // test_ft_back_front_empty_size();
-    // test_std_back_front_empty_size();
-    // test_ft_push_pop();
-    // test_std_push_pop();
-    // test_ft_operators();
-    // test_std_operators();
+    test_ft_constructor();
+    test_std_constructor();
+    test_ft_back_front_empty_size();
+    test_std_back_front_empty_size();
+    test_ft_push_pop();
+    test_std_push_pop();
+    test_ft_operators();
+    test_std_operators();
 }

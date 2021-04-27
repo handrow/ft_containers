@@ -6,7 +6,7 @@
 /*   By: handrow <handrow@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/19 15:38:12 by handrow           #+#    #+#             */
-/*   Updated: 2021/04/27 01:31:38 by handrow          ###   ########.fr       */
+/*   Updated: 2021/04/27 20:45:10 by handrow          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ namespace ft
         typedef ft::reverse_iterator<iterator>          reverse_iterator;
         typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
         typedef typename std::pair<iterator, bool>      insert_result;
-        typedef typename std::pair<iterator, iterator>  eq_range_result;
 
     private:
         tree_type       _tree;
@@ -51,10 +50,9 @@ namespace ft
         // MEMBER FUNCTIONS
         set(const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
         set(const set& other);
-        set(iterator first, iterator last, const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
+        template<typename Iterator>
+        set(Iterator first, Iterator last, const Compare& comp=Compare(), const allocator_type& alloc=allocator_type());
         ~set() {}
-
-        set&                    operator=(const set& other) { _tree.operator=(other); return *this; }
 
         // ITERATORS
         iterator                begin()             { return iterator(_tree.begin()); }
@@ -93,17 +91,95 @@ namespace ft
         iterator                            find(const value_type& key);
         const_iterator                      find(const value_type& key) const;
 
-        eq_range_result                     equal_range(const value_type& key);
-        // pair<const_iterator,const_iterator> equal_range(const value_type& key) const;
+        std::pair<iterator, iterator>            equal_range(const value_type& key);
+        std::pair<const_iterator,const_iterator> equal_range(const value_type& key) const;
         iterator                            lower_bound(const value_type& key);
-        // const_iterator                      lower_bound(const value_type& key) const;
+        const_iterator                      lower_bound(const value_type& key) const;
         iterator                            upper_bound(const value_type& key);
-        // const_iterator                      upper_bound(const value_type& key) const;
+        const_iterator                      upper_bound(const value_type& key) const;
 
-        // // OBSERVERS
+        // OBSERVERS
         value_compare                       key_comp() const;
         value_compare                       value_comp() const;
+
+        //NON-MEMBER FUNCTIONS
+        template<typename T, typename C, typename A>
+        friend bool    operator==(const set<T, C, A>& x, const set<T, C, A>& y);
+
+        template<typename T, typename C, typename A>
+        friend bool    operator!=(const set<T, C, A>& x, const set<T, C, A>& y);
+
+        template<typename T, typename C, typename A>
+        friend bool    operator<(const set<T, C, A>& x, const set<T, C, A>& y);
+
+        template<typename T, typename C, typename A>
+        friend bool    operator<=(const set<T, C, A>& x, const set<T, C, A>& y);
+
+        template<typename T, typename C, typename A>
+        friend bool    operator>(const set<T, C, A>& x, const set<T, C, A>& y);
+
+        template<typename T, typename C, typename A>
+        friend bool    operator>=(const set<T, C, A>& x, const set<T, C, A>& y);
     };
+
+    template<typename T, typename C, typename A>
+    bool    operator==(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+        typename set<T,C,A>::const_iterator x_it = x.begin();
+        typename set<T,C,A>::const_iterator x_end = x.end();
+        typename set<T,C,A>::const_iterator y_it = y.begin();
+        typename set<T,C,A>::const_iterator y_end = y.end();
+
+        while (x_it != x_end && y_it != y_end && *x_it == *y_it)
+        {
+            ++x_it;
+            ++y_it;
+        }
+
+        return x_it == x_end && y_it == y_end;
+    }
+
+    template<typename T, typename C, typename A>
+    bool    operator!=(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+        return !(x == y);
+    }
+
+    template<typename T, typename C, typename A>
+    bool    operator<(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+
+        typename set<T,C,A>::const_iterator x_it = x.begin();
+        typename set<T,C,A>::const_iterator x_end = x.end();
+        typename set<T,C,A>::const_iterator y_it = y.begin();
+        typename set<T,C,A>::const_iterator y_end = y.end();
+
+        while (x_it != x_end && y_it != y_end && *x_it == *y_it )
+        {
+            ++x_it;
+            ++y_it;
+        }
+        return (x_it == x_end && y_it != y_end)
+            || (x_it != x_end && y_it != y_end && *x_it < *y_it);
+    }
+
+    template<typename T, typename C, typename A>
+    bool    operator<=(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+        return !(x > y);
+    }
+
+    template<typename T, typename C, typename A>
+    bool    operator>(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+        return y < x;
+    }
+
+    template<typename T, typename C, typename A>
+    bool    operator>=(const set<T, C, A>& x, const set<T, C, A>& y)
+    {
+        return !(x < y);
+    }
     
     template<class T, class Comp, class Alloca>
     set<T, Comp, Alloca>::set(const value_compare& comp, const allocator_type& alloc)
@@ -120,7 +196,8 @@ namespace ft
     }
 
     template<class T, class Comp, class Alloca>
-    set<T, Comp, Alloca>::set(iterator first, iterator last, const value_compare& comp, const allocator_type& alloc)
+    template <typename Iterator>
+    set<T, Comp, Alloca>::set(Iterator first, Iterator last, const value_compare& comp, const allocator_type& alloc)
     : _tree(comp, alloc)
     , _size(0)
     {
@@ -130,7 +207,7 @@ namespace ft
     template<class T, class Comp, class Alloca>
     void   set<T, Comp, Alloca>::clear()
     {
-        _tree._root = tree_type::_cleanup_tree(_tree.root, _tree._data_alloc, _tree._node_alloc);
+        _tree.clear();
         _size = 0;
     }
 
@@ -223,37 +300,72 @@ namespace ft
         other._size = tmp;
     }
 
-//     template<class T, class Comp, class Alloca>
-//     typename set<T, Comp, Alloca>::eq_range_result  set<T, Comp, Alloca>::equal_range(const value_type& key)
-//     {
-        
-//     }
+    template<class T, class Comp, class Alloca>
+    std::pair<typename set<T, Comp, Alloca>::iterator, typename set<T, Comp, Alloca>::iterator>     
+    set<T, Comp, Alloca>::equal_range(const value_type& key)
+    {
+        return std::make_pair(lower_bound(key), upper_bound(key));
+    }
+
+    template<class T, class Comp, class Alloca>
+    std::pair<typename set<T, Comp, Alloca>::const_iterator, typename set<T, Comp, Alloca>::const_iterator>     
+    set<T, Comp, Alloca>::equal_range(const value_type& key) const
+    {
+        return std::make_pair(lower_bound(key), upper_bound(key));
+    }
 
     template<class T, class Comp, class Alloca>
     typename set<T, Comp, Alloca>::iterator         set<T, Comp, Alloca>::lower_bound(const value_type& key)
     {
-        iterator it(_tree.find_node(key));
-        if (it != end())
-            return it;
         iterator first = begin();
         iterator last = end();
-        while (first++ != last)
+        while (first != last)
         {
             if (!key_comp()(*first, key))
                 return first;
+            ++first;
         }
-        return last; // segmentation fault if key is greater
+        return last;
     }
 
     template<class T, class Comp, class Alloca>
-    typename set<T, Comp, Alloca>::iterator set<T, Comp, Alloca>::upper_bound(const value_type& key)
+    typename set<T, Comp, Alloca>::const_iterator   set<T, Comp, Alloca>::lower_bound(const value_type& key) const
     {
-        iterator first = begin();
-        iterator last = end();
-        while (first++ != last)
+        const_iterator first = begin();
+        const_iterator last = end();
+        while (first != last)
+        {
+            if (!key_comp()(*first, key))
+                return first;
+            ++first;
+        }
+        return last;
+    }
+
+    template<class T, class Comp, class Alloca>
+    typename set<T, Comp, Alloca>::iterator     set<T, Comp, Alloca>::upper_bound(const value_type& key)
+    {
+        iterator first = this->begin();
+        iterator last = this->end();
+        while (first != last)
         {
             if (key_comp()(key, *first))
                 return first;
+            ++first;
+        }
+        return last;
+    }
+
+    template<class T, class Comp, class Alloca>
+    typename set<T, Comp, Alloca>::const_iterator   set<T, Comp, Alloca>::upper_bound(const value_type& key) const
+    {
+        const_iterator first = this->begin();
+        const_iterator last = this->end();
+        while (first != last)
+        {
+            if (key_comp()(key, *first))
+                return first;
+            ++first;
         }
         return last;
     }
